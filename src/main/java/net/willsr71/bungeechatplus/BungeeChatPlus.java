@@ -114,7 +114,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
         if(config.getBoolean("pmEnabled", true)){
             aliases = config.getStringList("pmCommandAliases");
-            if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("w", "msg", "message", "tell", "whisper");
+            if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("w", "msg", "message", "tell", "whisper", "pm");
             super.getProxy().getPluginManager().registerCommand(this,
                     new CommandMessage(this, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
 

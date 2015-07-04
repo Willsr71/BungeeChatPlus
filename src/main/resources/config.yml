@@ -37,7 +37,7 @@ pmReceive: "&b[suggest=/w %player% ]%player% -> me[/suggest] &f> [i]%message%[/i
 pmUnknownTarget: "&c%target% is not on the server"
 pmPlaySound: true
 pmSound: ORB_PICKUP
-pmCommandAliases: ['w', 'msg', 'message', 'tell', 'whisper']
+pmCommandAliases: ['w', 'msg', 'message', 'tell', 'whisper', 'pm']
 pmReplyCommandAliases: ['reply', 'r']
 # Conversations - PMs but with no other chat
 pmConversationCommandAliases: ['chat', 'conversation']

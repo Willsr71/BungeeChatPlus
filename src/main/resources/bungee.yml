@@ -46,15 +46,21 @@ commands:
     usage: /ignore <player>
     aliases: [ignore, ignoreplayer]
 permissions:
-  bungeechatplus.*:
-    default: op
-    description: Give players with op everything by default
   bungeechatplus.admin:
     desfault: op
-    description: Ability to reload plugin
+    description: The ability to reload plugin configs
   bungeechatplus.mute:
     default: op
     description: Ability to mute and unmute players
   bungeechatplus.forceglobalchat:
     default: op
-    description: Force chat to all servers regardless of /local
+    description: Players with this permission force their chat messages to all players, regardless of that player being on local or global chat, useful for staff work
+  bungeechatplus.ignorecapsprevention:
+    default: op
+    description: Ignore caps filtering
+  bungeechatplus.chat.color:
+    desfault: op
+    description: The ability to usee color codes in chat
+  bungeechatplus.chat.bbcode:
+    desfault: op
+    description: The ability to use BBcode in chat
