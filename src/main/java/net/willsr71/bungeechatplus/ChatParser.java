@@ -1,4 +1,4 @@
-package codecrafter47.freebungeechat;
+package net.willsr71.bungeechatplus;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by florian on 25.01.15.
- */
 public class ChatParser {
     private static Pattern pattern = Pattern.compile("(?ims)(?=\\n)|(?:[&\u00A7](?<color>[0-9A-FK-OR]))|" +
             "(?:\\[(?<tag>/?(?:b|i|u|s|nocolor|nobbcode)|(?:url|command|hover|suggest|color)=(?<value>(?:(?:[^]\\[]*)\\[(?:[^]\\[]*)\\])*(?:[^]\\[]*))|/(?:url|command|hover|suggest|color))\\])|" +

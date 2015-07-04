@@ -1,19 +1,16 @@
-package codecrafter47.freebungeechat.commands;
+package net.willsr71.bungeechatplus.commands;
 
-import codecrafter47.freebungeechat.ChatParser;
-import codecrafter47.freebungeechat.FreeBungeeChat;
+import net.willsr71.bungeechatplus.BungeeChatPlus;
+import net.willsr71.bungeechatplus.ChatParser;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-/**
- * Created by florian on 28.01.15.
- */
-public class ReplyCommand extends Command {
+public class CommandMessage extends Command {
 
-    private FreeBungeeChat plugin;
+    private BungeeChatPlus plugin;
 
-    public ReplyCommand(FreeBungeeChat plugin, String name, String permission, String... aliases) {
+    public CommandMessage(BungeeChatPlus plugin, String name, String permission, String... aliases) {
         super(name, permission, aliases);
         this.plugin = plugin;
     }
@@ -21,24 +18,24 @@ public class ReplyCommand extends Command {
     @Override
     public void execute(CommandSender cs, final String[] args) {
         if (!(cs instanceof ProxiedPlayer)) {
-            cs.sendMessage("Only players can do this");
+            cs.sendMessage(ChatParser.parse("Only players can do this"));
             return;
         }
-
+        if (args.length < 1) {
+            plugin.endConversation((ProxiedPlayer) cs, false);
+            return;
+        }
+        final ProxiedPlayer target = plugin.getProxy().getPlayer(args[0]);
         final ProxiedPlayer player = (ProxiedPlayer) cs;
-
-        final ProxiedPlayer target = plugin.getReplyTarget(player);
-
         if (target == null) {
             String text = plugin.config.getString("unknownTarget").replace(
-                    "%target%",
-                    plugin.wrapVariable(args[0]));
+                    "%target%", plugin.wrapVariable(args[0]));
             player.sendMessage(ChatParser.parse(text));
             return;
         }
         String text = "";
-        for (String arg : args) {
-            text = text + arg + " ";
+        for (int i = 1; i < args.length; i++) {
+            text = text + args[i] + " ";
         }
 
         final String finalText = text;
@@ -49,5 +46,4 @@ public class ReplyCommand extends Command {
             }
         });
     }
-
 }

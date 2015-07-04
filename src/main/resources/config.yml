@@ -1,46 +1,109 @@
-# This is the Config File of FreeBungeeChat
-# read readme.md for more information
+###################################
+##### Bungee Chat Plus Config #####
+###################################
+consoleName: "&4CONSOLE"
+adminEnabled: true
+adminCommandAliases: ['bungeechatplus', 'bcp']
 
-# you can use %player%
-chatFormat: "&b[suggest=/w %player% ]%player%[/suggest] &f> %message%"
+###################################
+#####       Global Chat       #####
+###################################
+# This is the line for formatting chat messages
+# Usable variables are: %player%  %message% %prefix% %suffix% %type% %forced%
+# %type% and %forced% can be configured further using varGlobalChat etc.
+chatFormat: "&a[&9%type%%forced%&a] &9%server% %prefix% %tabName%&a:&r%suffix% %message%"
+# If connection with the bukkitbridge fails, it will still send the message with the backup format.
+backupChatFormat: "<%player%>&r %message%"
 
-# you can use %target%
-unknownTarget: "&c%target% is not on the server"
+varGlobalChat: "Global"
+varLocalChat: "Local"
+varForcedGlobal: "-Forced"
+varNotForced: ""
+localChatMessage: "&7You are now listening to local chat."
+globalChatMessage: "&7You are now listening to global chat."
+toggleChatCommandEnabled: true
+toggleChatCommandAliases: ['togglechat', 'chattoggle']
+globalChatCommandEnabled: false
+globalChatCommandAliases: ['global', 'g']
+localChatCommandEnabled: false
+localChatCommandAliases: ['local', 'l']
 
-# you can use %target%, will be send when trying to message an player who ignores you
-ignored: "&c%target% doesn't like you"
+###################################
+#####    Private Messaging    #####
+###################################
+pmEnabled: true
+pmSend: "&b[suggest=/w %target% ]You -> %target%[/suggest]&f > [i]%message%[/i]"
+pmReceive: "&b[suggest=/w %player% ]%player% -> me[/suggest] &f> [i]%message%[/i]"
+pmUnknownTarget: "&c%target% is not on the server"
+pmPlaySound: true
+pmSound: ORB_PICKUP
+pmCommandAliases: ['w', 'msg', 'message', 'tell', 'whisper']
+pmReplyCommandAliases: ['reply', 'r']
+# Conversations - PMs but with no other chat
+pmConversationCommandAliases: ['chat', 'conversation']
+pmConversationStartMessage: "&aYou started a conversation with %target%. All your chat messages will go directly to %target%."
+pmConversationEndMessage: "&cYour conversation with %target% is over. Chat works as normal again."
 
-ignoreSuccess: "&7You ignored %target%"
-ignoreUnignore: "&7You no longer ignore %target%"
-
-# you can use %player% and %target%
-privateMessageSend: "&b[suggest=/w %target% ]You -> %target%[/suggest]&f > [i]%message%[/i]"
-
-# you can use %player% and %target%
-privateMessageReceive: "&b[suggest=/w %player% ]%player% -> me[/suggest] &f> [i]%message%[/i]"
-
-# @mentioning players
+###################################
+#####    Mentioning Players   #####
+###################################
 enableTaggingPlayers: true
 taggedPlayer: "[color=gold][suggest=/w ${name}]@${name}[/suggest][/color]"
 playSoundToTaggedPlayer: true
 playerTaggedSound: ORB_PICKUP
 
-# sound on private message
-playSoundPrivateMessage: true
-privateMessageMessageSound: ORB_PICKUP
+###################################
+#####      Player Muting      #####
+###################################
+muteEnabled: true
+muteMessage: "&cYou have been muted for %reason% until %duration%"
+mutePardonMessage: "&cYou have been unmuted"
+muteDenyMessage: "&cYou are muted for %reason% until %duration%. for further assistance pm a Moderator."
+muteSuccess: "&7%target% has been muted for %reason% until %duration%"
+muteUnmuted: "&7%target% has been unmuted"
+muteMuteFail: "&7%target% is already muted for %reason% until %duration%"
+muteUnmuteFail: "&7%target% is not muted"
+muteCommandAliases: ['mute', 'bungeemute']
+muteUnmuteCommandAliases: ['unmute', 'bungeeunmute']
+muteListCommandAliases: ['mutelist', 'bungeemutelist', 'listmuted', 'bungeelistmuted']
 
-# Anti-Spam
-# if enabled players which send too many messages in a short time will be muted for a minute
-enableAntiSpam: true
-antiSpamText: "&cYou send to many messages. Please wait a minute before sending messages again."
+###################################
+#####      Player Ignore      #####
+###################################
+ignoreEnabled: true
+ignored: "&c%target% has ignored you"
+ignoreSuccess: "&7You ignored %target%"
+ignoreUnignore: "&7You no longer ignore %target%"
+ignoreCommandAliases: ['ignore', 'ignoreplayer']
 
-# Chat logging
-# if enabled chat messaged are written into proxy log
-logChat: false
-# name used when using /g in the server console
-consoleName: "SERVER"
+###################################
+#####        Anti-Spam        #####
+###################################
+antiSpamEnabled: true
+antiSpamMuteTime: 60
+antiSpamDenyMessage: "&cYou have sent to many messages. You must wait 1 minute before sending messages again."
 
-# you can add custom regular expressions here
+antiCapsEnabled: true
+antiCapsMinChatLength: 3
+antiCapsActivationPercentage: 50
+antiCapsAutoLowercase: true
+antiCapsMessage: "&bPlease refrain from using caps in chat"
+
+antiSwearEnabled: true
+antiSwearMessage: "&bPlease refrain from swearing in chat"
+antiSwearList: ['fuck', 'shit', 'damn']
+
+###################################
+#####           Misc          #####
+###################################
+# If enabled chat messaged are written into proxy log
+chatLogging: false
+unknownTarget: "&7%target% is not on the server"
+internalError: "&cAn internal error occurred while processing your chat message."
+
+###################################
+#####          Regex          #####
+###################################
 regex:
 # make any pasted links clickable for convenience
     - search: '(?<link>(?:(https?)://)?([-\w_\.]{2,}\.[a-z]{2,4})(/\S*)?)'
@@ -66,24 +129,12 @@ regex:
       replace: "\u2192"
     - search: '<-'
       replace: "\u2190"
-    - search: '(?i)\(C\)'
-      replace: "\u00A9"
-    - search: '(?i)\(R\)'
-      replace: "\u00AE"
     - search: '\(o\)|\(O\)|\(time\)'
       replace: "\u231A"
     - search: '\(rain\)'
       replace: "\u2602"
     - search: '\(sun\)'
       replace: "\u2600"
-    - search: '\(\*\)'
-      replace: "\u2605"
-    - search: ':\)|:=\)|:-\)'
-      replace: "\u263A"
-    - search: ':\(|:=\(|:-\('
-      replace: "\u2639"
-    - search: '(?i):[-=]?D'
-      replace: "\u263B"
     - search: '<3'
       replace: "\u2764"
 # underline clickable things
@@ -91,40 +142,15 @@ regex:
       replace: "[u]"
     - search: '(?i)\[/(?:url|command|suggest)\]'
       replace: "$0[/u]"
-
-# COMMANDS
-
-# /ignore allows players to ignore all kind of chat messages from another player
-enableIgnoreCommand: true
-ignoreCommandAliases: ['ignore']
-
-# private messages: /msg <player> and /reply ...
-enableMessageCommand: true
-messageCommandAliases: ['w', 'msg', 'message', 'tell', 'whisper']
-enableReplyCommand: true
-replyCommandAliases: ['reply', 'r']
-
-# command to write something in global chat; e.g. /g Hi there
-# normally the plugin treats all chat as global chat, so you wouldn't need this command
-enableGlobalChatCommand: true
-globalChatCommandAliases: ['global', 'g']
-
-# local chat /local
-# use this command to force a local chat message
-enableLocalChatCommand: false
-localChatCommandAliases: ['local', 'l']
-
-# /freebungeechat allows admins to reload the plugin ingame
-enableAdminCommand: true
-adminCommandAliases: ['freebungeechat', 'fbc']
-
-# conversation command
-# /chat CodeCrafter47 allows you to have a private chat with me
-# This saves you from typing /w CodeCrafter47 ... every time
-enableConversationCommand: true
-conversationCommandAliases: ['chat', 'conversation']
-startConversation: "&aYou started a conversation with %target%. All your chat messages will go directly to %target%."
-endConversation: "&cYour conversation with %target% is over. Chat works as normal again."
+# ;)
+    - search: (?i)(l.{1}+a.{1}+g|l\s*a\s*g)
+      replace: '[color=dark_red]marshmallows[/color]'
+    - search: (?i)t\s*p\s*s
+      replace: '[color=dark_red]mpc[/color]'
+    - search: (?i)ticks per second
+      replace: '[color=dark_red]marshmallows per campfire[/color]'
+    - search: '(?i)owner'
+      replace: '[color=dark_red]iKaneki Ken[/color]'
 
 ###########################################################
 # ONLY EDIT BELOW SETTINGS IF YOU KNOW WHAT YOU ARE DOING #
@@ -135,7 +161,6 @@ endConversation: "&cYour conversation with %target% is over. Chat works as norma
 # if you also disable /g you have disabled global chat completely
 # IF YOU DON'T KNOW WHAT THIS DOES DON'T CHANGE IT
 alwaysGlobalChat: true
-
 # exclude servers from global chat, players on these servers will not be able to send or receive global chat
 #excludeServers:
 #  - spawn

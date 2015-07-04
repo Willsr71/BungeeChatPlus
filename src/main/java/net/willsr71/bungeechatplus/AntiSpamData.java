@@ -1,8 +1,5 @@
-package codecrafter47.freebungeechat;
+package net.willsr71.bungeechatplus;
 
-/**
- * Created by florian on 04.03.15.
- */
 public class AntiSpamData {
     long lastMessages[] = {0L, 0L, 0L};
     long lastSpam = 0L;

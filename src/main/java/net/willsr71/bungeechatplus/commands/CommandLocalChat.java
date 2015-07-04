@@ -1,33 +1,30 @@
-package codecrafter47.freebungeechat.commands;
+package net.willsr71.bungeechatplus.commands;
 
-import codecrafter47.freebungeechat.FreeBungeeChat;
+import net.willsr71.bungeechatplus.BungeeChatPlus;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.willsr71.bungeechatplus.ChatParser;
 
-/**
- * Created by florian on 28.01.15.
- */
-public class GlobalChatCommand extends Command {
+public class CommandLocalChat extends Command {
 
-    private FreeBungeeChat plugin;
+    private BungeeChatPlus plugin;
 
-    public GlobalChatCommand(FreeBungeeChat plugin, String name, String permission, String... aliases) {
+    public CommandLocalChat(BungeeChatPlus plugin, String name, String permission, String... aliases) {
         super(name, permission, aliases);
         this.plugin = plugin;
     }
 
     @Override
     public void execute(final CommandSender cs, final String[] args) {
+        if (!(cs instanceof ProxiedPlayer)) {
+            cs.sendMessage(ChatParser.parse("Player only command"));
+            return;
+        }
+
         String message = "";
         for (String arg : args) {
             message = message + arg + " ";
-        }
-
-        if (!(cs instanceof ProxiedPlayer)) {
-            if(!message.trim().isEmpty())plugin.sendGlobalConsoleChatMessage(message);
-            else cs.sendMessage("/g <message>");
-            return;
         }
 
         if (message.isEmpty()) {
@@ -39,7 +36,7 @@ public class GlobalChatCommand extends Command {
         plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-                plugin.sendGlobalChatMessage((ProxiedPlayer) cs, finalMessage);
+                ((ProxiedPlayer) cs).chat(finalMessage);
             }
         });
     }

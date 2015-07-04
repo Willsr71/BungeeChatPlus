@@ -1,7 +1,7 @@
-package codecrafter47.freebungeechat.commands;
+package net.willsr71.bungeechatplus.commands;
 
-import codecrafter47.freebungeechat.ChatParser;
-import codecrafter47.freebungeechat.FreeBungeeChat;
+import net.willsr71.bungeechatplus.ChatParser;
+import net.willsr71.bungeechatplus.BungeeChatPlus;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -9,14 +9,11 @@ import net.md_5.bungee.api.plugin.Command;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by florian on 28.01.15.
- */
-public class IgnoreCommand extends Command {
+public class CommandIgnore extends Command {
 
-    private FreeBungeeChat plugin;
+    private BungeeChatPlus plugin;
 
-    public IgnoreCommand(FreeBungeeChat plugin, String name, String permission, String... aliases) {
+    public CommandIgnore(BungeeChatPlus plugin, String name, String permission, String... aliases) {
         super(name, permission, aliases);
         this.plugin = plugin;
     }
@@ -24,12 +21,12 @@ public class IgnoreCommand extends Command {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (!(cs instanceof ProxiedPlayer)) {
-            cs.sendMessage("Only players can do this");
+            cs.sendMessage(ChatParser.parse("Only players can do this"));
             return;
         }
 
         if (args.length != 1) {
-            cs.sendMessage("/ignore <player>");
+            cs.sendMessage(ChatParser.parse("/ignore <player>"));
         }
 
         ProxiedPlayer toIgnore = plugin.getProxy().getPlayer(args[0]);

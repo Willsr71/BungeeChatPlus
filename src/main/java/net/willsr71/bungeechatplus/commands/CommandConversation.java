@@ -1,18 +1,15 @@
-package codecrafter47.freebungeechat.commands;
+package net.willsr71.bungeechatplus.commands;
 
-import codecrafter47.freebungeechat.ChatParser;
-import codecrafter47.freebungeechat.FreeBungeeChat;
+import net.willsr71.bungeechatplus.ChatParser;
+import net.willsr71.bungeechatplus.BungeeChatPlus;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-/**
- * Created by florian on 10.02.15.
- */
-public class ConversationCommand extends Command {
-    private final FreeBungeeChat plugin;
+public class CommandConversation extends Command {
+    private final BungeeChatPlus plugin;
 
-    public ConversationCommand(FreeBungeeChat plugin, String name, String permission, String... aliases) {
+    public CommandConversation(BungeeChatPlus plugin, String name, String permission, String... aliases) {
         super(name, permission, aliases);
         this.plugin = plugin;
     }
@@ -20,7 +17,7 @@ public class ConversationCommand extends Command {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (!(cs instanceof ProxiedPlayer)) {
-            cs.sendMessage("Only players can do this");
+            cs.sendMessage(ChatParser.parse("Only players can do this"));
             return;
         }
         if (args.length < 1) {
@@ -30,8 +27,7 @@ public class ConversationCommand extends Command {
         final ProxiedPlayer target = plugin.getProxy().getPlayer(args[0]);
         final ProxiedPlayer player = (ProxiedPlayer) cs;
         if (target == null) {
-            String text = plugin.config.getString("unknownTarget").replace(
-                    "%target%", plugin.wrapVariable(args[0]));
+            String text = plugin.config.getString("unknownTarget").replace("%target%", plugin.wrapVariable(args[0]));
             player.sendMessage(ChatParser.parse(text));
             return;
         }

@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2014 Florian Stober
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-package codecrafter47.freebungeechat.bukkit;
+package net.willsr71.bungeechatplus.bukkit;
 
 import lombok.SneakyThrows;
 import org.bukkit.Sound;
@@ -24,15 +8,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
+import java.util.logging.Level;
 
-/**
- * @author Florian Stober
- */
-public class FreeBungeeChatBukkit extends JavaPlugin implements Listener {
+public class BungeeChatPlusBukkit extends JavaPlugin implements Listener {
 
     VaultHook vaultHook = null;
 
@@ -46,21 +25,23 @@ public class FreeBungeeChatBukkit extends JavaPlugin implements Listener {
 
                     @Override
                     @SneakyThrows
-                    public void onPluginMessageReceived(String string,
-                                                        Player player, byte[] bytes) {
+                    public void onPluginMessageReceived(String string, Player player, byte[] bytes) {
                         DataInputStream in = new DataInputStream(
                                 new ByteArrayInputStream(bytes));
-
-                        String subchannel = in.readUTF();
-                        if (subchannel.equalsIgnoreCase(Constants.subchannel_chatMsg)) {
-                            String text = in.readUTF();
-                            String prefix = in.readUTF();
-                            int id = in.readInt();
-                            boolean allowBBCode = in.readBoolean();
-                            processChatMessage(player, text, prefix, id, allowBBCode);
-                        }
-                        if (subchannel.equalsIgnoreCase(Constants.subchannel_playSound)) {
-                            player.playSound(player.getLocation(), Sound.valueOf(in.readUTF()), 5, 1);
+                        try {
+                            String subchannel = in.readUTF();
+                            if (subchannel.equalsIgnoreCase(Constants.subchannel_chatMsg)) {
+                                String text = in.readUTF();
+                                String prefix = in.readUTF();
+                                int id = in.readInt();
+                                boolean allowBBCode = in.readBoolean();
+                                processChatMessage(player, text, prefix, id, allowBBCode);
+                            }
+                            if (subchannel.equalsIgnoreCase(Constants.subchannel_playSound)) {
+                                player.playSound(player.getLocation(), Sound.valueOf(in.readUTF()), 5, 1);
+                            }
+                        }catch (IOException e){
+                            e.printStackTrace();
                         }
 
                     }
@@ -72,6 +53,15 @@ public class FreeBungeeChatBukkit extends JavaPlugin implements Listener {
         if (vault != null) {
             getLogger().info("hooked Vault");
             vaultHook = new VaultHook(this);
+        }
+
+        // Enable Metrics
+        try {
+            BukkitMetrics metrics = new BukkitMetrics(this);
+            metrics.start();
+            getLogger().log(Level.INFO, "Enabled Bungee Metrics");
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Error enabling Bungee Metrics", e);
         }
     }
 
@@ -115,11 +105,15 @@ public class FreeBungeeChatBukkit extends JavaPlugin implements Listener {
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream outputStream1 = new DataOutputStream(outputStream);
-        outputStream1.writeUTF(Constants.subchannel_chatMsg);
-        outputStream1.writeInt(id);
-        outputStream1.writeUTF(text);
-        outputStream1.flush();
-        outputStream1.close();
+        try {
+            outputStream1.writeUTF(Constants.subchannel_chatMsg);
+            outputStream1.writeInt(id);
+            outputStream1.writeUTF(text);
+            outputStream1.flush();
+            outputStream1.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
         player.sendPluginMessage(this, Constants.channel, outputStream.toByteArray());
     }
 

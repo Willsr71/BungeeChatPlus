@@ -4,10 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>codecrafter47.freebungeechat</groupId>
-    <artifactId>FreeBungeeChat</artifactId>
-    <version>2.2-SNAPSHOT</version>
-
+    <groupId>net.willsr71</groupId>
+    <artifactId>bungeechatplus</artifactId>
+    <version>1.7</version>
 
     <repositories>
         <repository>
@@ -22,7 +21,12 @@
             <id>vault-repo</id>
             <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
         </repository>
+        <repository>
+            <id>Plugin Metrics</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
     </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -34,13 +38,41 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>org.mcstats.*:*</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.mcstats</pattern>
+                            <shadedPattern>net.willsr71.bungeechatplus</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.7.9-R0.3-SNAPSHOT</version>
+            <type>jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -54,12 +86,14 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.14.8</version>
+            <type>jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
@@ -73,6 +107,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.mcstats.bungee</groupId>
+            <artifactId>metrics</artifactId>
+            <version>R7</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
-
 </project>
