@@ -37,7 +37,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public Configuration playerLists;
     public static BungeeChatPlus instance;
 
-    public List<String> forceGlobalChatPlayers = new ArrayList<>();
     public List<String> localPlayers = new ArrayList<>();
     public MuteData mutedPlayers = new MuteData();
     public List<String> excludedServers = new ArrayList<>();
@@ -171,6 +170,83 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onChat(final ChatEvent event) {
+        // ignore canceled chat
+        if (event.isCancelled()) return;
+        if (!(event.getSender() instanceof ProxiedPlayer)) return;
+
+        final ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+
+        // ignore commands
+        if (event.isCommand()){
+            BCPLogger.logCommand(player, event.getMessage());
+            return;
+        }
+
+        if (persistentConversations.containsKey(player.getName())) {
+            final ProxiedPlayer target = getProxy().getPlayer(persistentConversations.get(player.getName()));
+            if (target != null) {
+                getProxy().getScheduler().runAsync(this, new Runnable() {
+                    @Override
+                    public void run() {
+                        sendPrivateMessage(event.getMessage(), target, player);
+                    }
+                });
+                event.setCancelled(true);
+                return;
+            } else {
+                player.sendMessage(ChatParser.parse(config.getString("unknownTarget").replace(
+                        "%target%", wrapVariable(persistentConversations.get(player.getName())))));
+                endConversation(player, true);
+            }
+        }
+
+        // is this global chat?
+        if (!config.getBoolean("alwaysGlobalChat", true)) return;
+
+        if (excludedServers.contains(player.getServer().getInfo().getName())) return;
+
+        // cancel event
+        event.setCancelled(true);
+
+        final String message = event.getMessage();
+
+        getProxy().getScheduler().runAsync(this, new Runnable() {
+            @Override
+            public void run() {
+                sendGlobalChatMessage(player, message);
+            }
+        });
+    }
+
+    @EventHandler
+    public void onTabComplete(TabCompleteEvent event) {
+        String commandLine = event.getCursor();
+        if (!commandLine.startsWith("/")) return;
+        if (!commandLine.startsWith("@")) return;
+        if (commandLine.matches("^/(?:" + Joiner.on('|').join(Iterables.concat(config.getStringList("pmCommandAliases"),
+                config.getStringList("pmConversationCommandAliases"))) + ").*$")) {
+            event.getSuggestions().clear();
+            String[] split = commandLine.split(" ");
+            String begin = split[split.length - 1];
+            for (ProxiedPlayer player : getProxy().getPlayers()) {
+                if (player.getName().toLowerCase().contains(begin.toLowerCase()) || player.getDisplayName().toLowerCase().contains(begin.toLowerCase())) {
+                    event.getSuggestions().add(player.getName());
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDisconnect(PlayerDisconnectEvent event) {
+        String name = event.getPlayer().getName();
+        if (replyTarget.containsKey(name)) replyTarget.remove(name);
+        if (ignoredPlayers.containsKey(name)) ignoredPlayers.remove(name);
+        if (persistentConversations.containsKey(name)) persistentConversations.remove(name);
+        if (spamDataMap.containsKey(name)) spamDataMap.remove(name);
+    }
+
     public void sendGlobalChatMessage(ProxiedPlayer player, String message) {
         try {
             if(checkMuted(player)) return;
@@ -220,11 +296,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
                     //player.sendMessage(ChatParser.parse(target.getName() + " -> " + player.getName() + " = " + (player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()))));
                 }
             }
-            if(!config.getBoolean("logChatUsingCustomFormatting")) {
-                BCPLogger.logChat(player.getName(), message);
-            }else{
-                BCPLogger.logChat(player.getName(), msg.toString());
-            }
+            BCPLogger.logChat(player, message);
 
             if(isCapsing) player.sendMessage(ChatParser.parse(config.getString("antiCapsMessage")));
         } catch (Throwable th) {
@@ -318,12 +390,13 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }
 
         format = format.replace("%player%", wrapVariable(player.getDisplayName()));
-        format = format.replace("%message%", message);
-        format = format.replace("%server%", serverInfo.getName());
-        format = format.replace("%server-players%", serverInfo.getPlayers().size() + "");
-        format = format.replace("%server-motd%", serverInfo.getMotd());
-        format = format.replace("%type%", type);
-        format = format.replace("%forced%", forced);
+        format = format.replace("%message%", wrapVariable(message));
+        format = format.replace("%server%", wrapVariable(serverInfo.getName()));
+        format = format.replace("%server-players%", wrapVariable(serverInfo.getPlayers().size() + ""));
+        format = format.replace("%server-motd%", wrapVariable(serverInfo.getMotd()));
+        format = format.replace("%type%", wrapVariable(type));
+        format = format.replace("%forced%", wrapVariable(forced));
+        format = format.replace("%ping%", wrapVariable(Integer.toString(player.getPing())));
         return format;
     }
 
@@ -386,56 +459,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return text;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onChat(final ChatEvent event) {
-        // ignore canceled chat
-        if (event.isCancelled()) return;
-        if (!(event.getSender() instanceof ProxiedPlayer)) return;
-
-        final ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-
-        // ignore commands
-        if (event.isCommand()){
-            BCPLogger.logCommand(player.getName(), event.getMessage());
-            return;
-        }
-
-        if (persistentConversations.containsKey(player.getName())) {
-            final ProxiedPlayer target = getProxy().getPlayer(persistentConversations.get(player.getName()));
-            if (target != null) {
-                getProxy().getScheduler().runAsync(this, new Runnable() {
-                    @Override
-                    public void run() {
-                        sendPrivateMessage(event.getMessage(), target, player);
-                    }
-                });
-                event.setCancelled(true);
-                return;
-            } else {
-                player.sendMessage(ChatParser.parse(config.getString("unknownTarget").replace(
-                        "%target%", wrapVariable(persistentConversations.get(player.getName())))));
-                endConversation(player, true);
-            }
-        }
-
-        // is this global chat?
-        if (!config.getBoolean("alwaysGlobalChat", true)) return;
-
-        if (excludedServers.contains(player.getServer().getInfo().getName())) return;
-
-        // cancel event
-        event.setCancelled(true);
-
-        final String message = event.getMessage();
-
-        getProxy().getScheduler().runAsync(this, new Runnable() {
-            @Override
-            public void run() {
-                sendGlobalChatMessage(player, message);
-            }
-        });
-    }
-
     public void endConversation(ProxiedPlayer player, boolean force) {
         if (force || persistentConversations.containsKey(player.getName())) {
             if(persistentConversations.containsKey(player.getName())) {
@@ -445,23 +468,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
                 player.sendMessage(ChatParser.parse(config.getString("endConversationEndMessage").replace("%target%", "nobody")));
             }
         }
-    }
-
-    public void tellOps(ProxiedPlayer player, String message){
-        for (ProxiedPlayer target : getProxy().getPlayers()){
-            if (!target.getName().equals(player.getName()) && forceGlobalChatPlayers.contains(target.getName())){
-                target.sendMessage(ChatParser.parse(message));
-            }
-        }
-    }
-
-    @EventHandler
-    public void onDisconnect(PlayerDisconnectEvent event) {
-        String name = event.getPlayer().getName();
-        if (replyTarget.containsKey(name)) replyTarget.remove(name);
-        if (ignoredPlayers.containsKey(name)) ignoredPlayers.remove(name);
-        if (persistentConversations.containsKey(name)) persistentConversations.remove(name);
-        if (spamDataMap.containsKey(name)) spamDataMap.remove(name);
     }
 
     public ProxiedPlayer getReplyTarget(ProxiedPlayer player) {
@@ -485,24 +491,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
             Files.copy(getResourceAsStream(name), file.toPath());
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    @EventHandler
-    public void onTabComplete(TabCompleteEvent event) {
-        String commandLine = event.getCursor();
-        if (!commandLine.startsWith("/")) return;
-        if (!commandLine.startsWith("@")) return;
-        if (commandLine.matches("^/(?:" + Joiner.on('|').join(Iterables.concat(config.getStringList("pmCommandAliases"),
-                config.getStringList("pmConversationCommandAliases"))) + ").*$")) {
-            event.getSuggestions().clear();
-            String[] split = commandLine.split(" ");
-            String begin = split[split.length - 1];
-            for (ProxiedPlayer player : getProxy().getPlayers()) {
-                if (player.getName().toLowerCase().contains(begin.toLowerCase()) || player.getDisplayName().toLowerCase().contains(begin.toLowerCase())) {
-                    event.getSuggestions().add(player.getName());
-                }
-            }
         }
     }
 

@@ -101,7 +101,7 @@ alwaysGlobalChat: true
 allowBBCodeInVariables: false
 excludeServers: []
 versionDontTouch:
-  seriouslyThisWillEraseYourConfig: '1.7'
+  seriouslyThisWillEraseYourConfig: '1.8'
 
 ###################################
 #####          Regex          #####
