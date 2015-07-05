@@ -1,13 +1,6 @@
 ###################################
 ##### Bungee Chat Plus Config #####
 ###################################
-consoleName: "&4CONSOLE"
-adminEnabled: true
-adminCommandAliases: ['bungeechatplus', 'bcp']
-
-###################################
-#####       Global Chat       #####
-###################################
 # This is the line for formatting chat messages
 # Usable variables are: %player%  %message% %prefix% %suffix% %type% %forced%
 # %type% and %forced% can be configured further using varGlobalChat etc.
@@ -98,8 +91,16 @@ antiSwearList: ['fuck', 'shit', 'damn']
 ###################################
 # If enabled chat messaged are written into proxy log
 chatLogging: false
+consoleName: "&4CONSOLE"
+bcpCommandAliases: ['bcp', 'bungeechatplus']
+reloadCommandAliases: ['bcpreload', 'bungeechatplusreload']
 unknownTarget: "&7%target% is not on the server"
 internalError: "&cAn internal error occurred while processing your chat message."
+alwaysGlobalChat: true
+allowBBCodeInVariables: false
+excludeServers: []
+versionDontTouch:
+  seriouslyThisWillEraseYourConfig: '1.7'
 
 ###################################
 #####          Regex          #####
@@ -142,29 +143,3 @@ regex:
       replace: "[u]"
     - search: '(?i)\[/(?:url|command|suggest)\]'
       replace: "$0[/u]"
-# ;)
-    - search: (?i)(l.{1}+a.{1}+g|l\s*a\s*g)
-      replace: '[color=dark_red]marshmallows[/color]'
-    - search: (?i)t\s*p\s*s
-      replace: '[color=dark_red]mpc[/color]'
-    - search: (?i)ticks per second
-      replace: '[color=dark_red]marshmallows per campfire[/color]'
-    - search: '(?i)owner'
-      replace: '[color=dark_red]iKaneki Ken[/color]'
-
-###########################################################
-# ONLY EDIT BELOW SETTINGS IF YOU KNOW WHAT YOU ARE DOING #
-###########################################################
-
-# whether to treat all chat as global chat
-# if this is set to false use /g for global chat
-# if you also disable /g you have disabled global chat completely
-# IF YOU DON'T KNOW WHAT THIS DOES DON'T CHANGE IT
-alwaysGlobalChat: true
-# exclude servers from global chat, players on these servers will not be able to send or receive global chat
-#excludeServers:
-#  - spawn
-#  - survival
-
-# disallows bbcode in variables, prevents issues that might come up if square brackets are used in the prefix
-allowBBCodeInVariables: false

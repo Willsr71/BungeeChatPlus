@@ -1,4 +1,12 @@
-target/
 .idea/
 bungee/
 dependency-reduced-pom.xml
+
+#Target
+target/classes/
+target/generated-sources/
+target/maven-archiver/
+target/maven-status/
+target/surefire/
+target/original-*
+target/*-shaded.jar

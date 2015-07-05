@@ -16,7 +16,6 @@ public class CommandToggleChat extends Command {
 
     @Override
     public void execute(final CommandSender cs, final String[] args) {
-        //List<String> localPlayers = plugin.localPlayers;
         if (!plugin.localPlayers.contains(cs.getName())) {
             plugin.localPlayers.add(cs.getName());
             cs.sendMessage(ChatParser.parse(plugin.config.getString("localChatMessage")));
@@ -24,6 +23,6 @@ public class CommandToggleChat extends Command {
             plugin.localPlayers.remove(cs.getName());
             cs.sendMessage(ChatParser.parse(plugin.config.getString("globalChatMessage")));
         }
-        //plugin.localPlayers.add(cs.getName());
+        plugin.savePlayerLists();
     }
 }

@@ -42,7 +42,7 @@ public class CommandMessage extends Command {
         plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-                plugin.sendPrivateMessage(finalText, target, player);
+                plugin.chatSender.sendPrivateMessage(finalText, target, player);
             }
         });
     }

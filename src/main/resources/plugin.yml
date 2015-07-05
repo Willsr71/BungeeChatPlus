@@ -7,8 +7,12 @@ website: http://willsr71.net/
 commands:
   bcp:
     description: Core command for BungeeChatPlus
-    usage: /bcp reload
-    aliases: [bungeechatplus, bcp]
+    usage: /bcp <command> <args>
+    aliases: [bcp, bungeechatplus]
+  reload:
+    description: Reload BungeeChatPlus configs
+    usage: /bcpreload
+    aliases: [bcpreload, bungeechatplusreload]
   togglechat:
     description: Toggle global/locla chat
     usage: /togglechat
@@ -46,7 +50,7 @@ commands:
     usage: /ignore <player>
     aliases: [ignore, ignoreplayer]
 permissions:
-  bungeechatplus.admin:
+  bungeechatplus.reload:
     desfault: op
     description: The ability to reload plugin configs
   bungeechatplus.mute:

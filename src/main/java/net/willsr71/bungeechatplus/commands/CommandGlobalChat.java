@@ -23,7 +23,7 @@ public class CommandGlobalChat extends Command {
         }
 
         if (!(cs instanceof ProxiedPlayer)) {
-            if(!message.trim().isEmpty())plugin.sendGlobalConsoleChatMessage(message);
+            if(!message.trim().isEmpty())plugin.chatSender.sendGlobalConsoleChatMessage(message);
             else cs.sendMessage(ChatParser.parse("/g <message>"));
             return;
         }
@@ -37,7 +37,7 @@ public class CommandGlobalChat extends Command {
         plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-                plugin.sendGlobalChatMessage((ProxiedPlayer) cs, finalMessage);
+                plugin.chatSender.sendGlobalChatMessage((ProxiedPlayer) cs, finalMessage);
             }
         });
     }
