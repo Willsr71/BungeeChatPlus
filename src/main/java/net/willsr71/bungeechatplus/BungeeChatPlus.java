@@ -4,8 +4,10 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.TabCompleteEvent;
@@ -42,10 +44,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public List<String> swearList = new ArrayList<>();
 
     public BukkitBridge bukkitBridge;
-
     public VersionChecker versionChecker = new VersionChecker();
-    public ChatSender chatSender = new ChatSender();
-    public ChatLogger chatLogger = new ChatLogger();
 
     @Override
     public void onEnable() {
@@ -98,7 +97,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         aliases = config.getStringList("reloadCommandAliases");
         if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("bcpreload", "bungeechatplusreload");
         super.getProxy().getPluginManager().registerCommand(this,
-                new CommandBase(this, aliases.get(0), "bungeechatplus.reload", aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
+                new CommandReload(this, aliases.get(0), "bungeechatplus.reload", aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
 
         if(config.getBoolean("toggleChatCommandEnabled", true)){
             aliases = config.getStringList("toggleChatCommandAliases");
@@ -172,6 +171,162 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }
     }
 
+    public void sendGlobalChatMessage(ProxiedPlayer player, String message) {
+        try {
+            if(checkMuted(player)) return;
+            if(checkSpam(player)) return;
+            message = preparePlayerChat(message, player);
+            message = replaceRegex(message);
+            message = applyTagLogic(message);
+
+            // filter chat
+            boolean isCapsing;
+            if(config.getBoolean("antiCapsEnabled")) {
+                isCapsing = isUsingCaps(message);
+                if (isCapsing && config.getBoolean("antiCapsAutoLowercase")) {
+                    message = message.toLowerCase();
+                }
+            }else{
+                isCapsing = false;
+            }
+            if(config.getBoolean("antiSwearEnabled")){
+                message = filterSwears(message);
+            }
+
+            String text = config.getString("chatFormat");
+            text = replaceVars(player, text, message);
+            try {
+                text = bukkitBridge.replaceVariables(player, text, "");
+            }catch (Exception e){
+                player.sendMessage(ChatParser.parse("&cChat formatting failed. Reverting to backup."));
+                text = config.getString("backupChatFormat");
+                text = replaceVars(player, text, message);
+            }
+
+            // broadcast message
+            BaseComponent[] msg = ChatParser.parse(text);
+            for (ProxiedPlayer target : getProxy().getPlayers()) {
+                if (ignoredPlayers.get(target.getName()) != null && ignoredPlayers.get(target.getName()).contains(player.getName()))
+                    continue;
+                Server server = target.getServer();
+                if (server == null || !excludedServers.contains(server.getInfo().getName())) {
+                    if(localPlayers.contains(target.getName())){
+                        if(player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()) || player.hasPermission("bungeechatplus.forceglobalchat")){
+                            target.sendMessage(msg);
+                        }
+                    }else {
+                        target.sendMessage(msg);
+                    }
+                    //player.sendMessage(ChatParser.parse(target.getName() + " -> " + player.getName() + " = " + (player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()))));
+                }
+            }
+            if(!config.getBoolean("logChatUsingCustomFormatting")) {
+                BCPLogger.logChat(player.getName(), message);
+            }else{
+                BCPLogger.logChat(player.getName(), msg.toString());
+            }
+
+            if(isCapsing) player.sendMessage(ChatParser.parse(config.getString("antiCapsMessage")));
+        } catch (Throwable th) {
+            try {
+                player.sendMessage(ChatParser.parse(config.getString("internalError")));
+            } catch (Exception e) {
+                e.printStackTrace();
+                // maybe the player is offline?
+            }
+            getLogger().log(Level.SEVERE, "Error while processing chat message", th);
+        }
+    }
+
+    public void sendGlobalConsoleChatMessage(String message) {
+        try {
+            message = replaceRegex(message);
+            message = applyTagLogic(message);
+
+            // replace variables
+            String text = config.getString("chatFormat").replace("%player%", config.getString("consoleName", "SERVER"));
+            text = text.replace("%message%", message);
+            text = text.replaceAll("%(group|prefix|suffix|balance|currency|currencyPl|tabName|displayName|world|health|level)%", "");
+
+            // broadcast message
+            BaseComponent[] msg = ChatParser.parse(text);
+            for (ProxiedPlayer target : getProxy().getPlayers()) {
+                Server server = target.getServer();
+                if (server == null || !excludedServers.contains(server.getInfo().getName())) {
+                    target.sendMessage(msg);
+                }
+            }
+            if(config.getBoolean("logChat", false)){
+                getProxy().getLogger().info(config.getString("consoleName", "SERVER") + ": " + message);
+            }
+        } catch (Throwable th) {
+            getLogger().log(Level.SEVERE, "Error while processing chat message", th);
+        }
+    }
+
+    public void sendPrivateMessage(String text, ProxiedPlayer target, ProxiedPlayer player) {
+        if (checkSpam(player)) return;
+        // check ignored
+        if (ignoredPlayers.get(target.getName()) != null && ignoredPlayers.get(target.getName()).contains(player.getName())) {
+            text = config.getString("ignored").replace(
+                    "%target%", wrapVariable(target.getName()));
+            player.sendMessage(ChatParser.parse(text));
+            return;
+        }
+
+        text = preparePlayerChat(text, player);
+        text = replaceRegex(text);
+
+        player.sendMessage(ChatParser.parse(
+                bukkitBridge.replaceVariables(target, bukkitBridge.replaceVariables(player, config.getString("pmSend").replace(
+                        "%target%", wrapVariable(target.
+                                getDisplayName())).replace(
+                        "%player%", wrapVariable(player.
+                                getDisplayName())).replace(
+                        "%message%", text), ""), "t")));
+
+        target.sendMessage(ChatParser.parse(
+                bukkitBridge.replaceVariables(target, bukkitBridge.replaceVariables(player, config.getString("pmReceive").replace(
+                        "%target%", wrapVariable(target.
+                                getDisplayName())).replace(
+                        "%player%", wrapVariable(player.
+                                getDisplayName())).replace(
+                        "%message%", text), ""), "t")));
+
+        replyTarget.put(target.getName(), player.getName());
+
+        if (config.getBoolean("playSoundPrivateMessage", true)) {
+            bukkitBridge.playSound(target, config.getString("pmSound"));
+        }
+    }
+
+    public String replaceVars(ProxiedPlayer player, String format, String message){
+        ServerInfo serverInfo = player.getServer().getInfo();
+
+        String type;
+        if (localPlayers.contains(player.getName())) {
+            type = config.getString("varLocalChat");
+        }else{
+            type = config.getString("varGlobalChat");
+        }
+
+        String forced;
+        if (player.hasPermission("bungeechatplus.forceglobalchat")) {
+            forced = config.getString("varForcedGlobal");
+        }else{
+            forced = config.getString("varNotForced");
+        }
+
+        format = format.replace("%player%", wrapVariable(player.getDisplayName()));
+        format = format.replace("%message%", message);
+        format = format.replace("%server%", serverInfo.getName());
+        format = format.replace("%server-players%", serverInfo.getPlayers().size() + "");
+        format = format.replace("%server-motd%", serverInfo.getMotd());
+        format = format.replace("%type%", type);
+        format = format.replace("%forced%", forced);
+        return format;
+    }
+
     public boolean checkSpam(ProxiedPlayer player) {
         if (!config.getBoolean("enableAntiSpam", true)) return false;
         String name = player.getName();
@@ -235,15 +390,15 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void onChat(final ChatEvent event) {
         // ignore canceled chat
         if (event.isCancelled()) return;
-
         if (!(event.getSender() instanceof ProxiedPlayer)) return;
 
+        final ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+
         // ignore commands
-        if (event.isCommand()) {
+        if (event.isCommand()){
+            BCPLogger.logCommand(player.getName(), event.getMessage());
             return;
         }
-
-        final ProxiedPlayer player = (ProxiedPlayer) event.getSender();
 
         if (persistentConversations.containsKey(player.getName())) {
             final ProxiedPlayer target = getProxy().getPlayer(persistentConversations.get(player.getName()));
@@ -251,7 +406,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
                 getProxy().getScheduler().runAsync(this, new Runnable() {
                     @Override
                     public void run() {
-                        chatSender.sendPrivateMessage(event.getMessage(), target, player);
+                        sendPrivateMessage(event.getMessage(), target, player);
                     }
                 });
                 event.setCancelled(true);
@@ -276,7 +431,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         getProxy().getScheduler().runAsync(this, new Runnable() {
             @Override
             public void run() {
-                chatSender.sendGlobalChatMessage(player, message);
+                sendGlobalChatMessage(player, message);
             }
         });
     }

@@ -1,6 +1,5 @@
 package net.willsr71.bungeechatplus.bukkit;
 
-import lombok.SneakyThrows;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -24,7 +23,6 @@ public class BungeeChatPlusBukkit extends JavaPlugin implements Listener {
                 Constants.channel, new PluginMessageListener() {
 
                     @Override
-                    @SneakyThrows
                     public void onPluginMessageReceived(String string, Player player, byte[] bytes) {
                         DataInputStream in = new DataInputStream(
                                 new ByteArrayInputStream(bytes));
@@ -65,7 +63,6 @@ public class BungeeChatPlusBukkit extends JavaPlugin implements Listener {
         }
     }
 
-    @SneakyThrows
     private void processChatMessage(Player player, String text, String prefix, int id, boolean allowBBCode) {
         if (vaultHook != null) {
             vaultHook.refresh();

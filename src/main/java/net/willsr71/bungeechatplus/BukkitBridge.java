@@ -1,8 +1,6 @@
 package net.willsr71.bungeechatplus;
 
 import net.willsr71.bungeechatplus.bukkit.Constants;
-import lombok.SneakyThrows;
-import lombok.Synchronized;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -37,8 +35,6 @@ public class BukkitBridge implements Listener {
             if (event.getReceiver() instanceof ProxiedPlayer && event.
                     getSender() instanceof Server) {
                 try {
-                    ProxiedPlayer player = (ProxiedPlayer) event.getReceiver();
-
                     DataInputStream in = new DataInputStream(
                             new ByteArrayInputStream(event.getData()));
 
@@ -71,7 +67,6 @@ public class BukkitBridge implements Listener {
         }
     }
 
-    @SneakyThrows
     public String replaceVariables(ProxiedPlayer player, String text, String prefix) {
         int tries = 0;
         while (text.matches("^.*%" + prefix + "(group|prefix|suffix|balance|currency|currencyPl|tabName|displayName|world|health|level)%.*$")
@@ -115,7 +110,6 @@ public class BukkitBridge implements Listener {
         return text;
     }
 
-    @Synchronized
     private int getId() {
         return cnt++;
     }

@@ -89,8 +89,9 @@ antiSwearList: ['fuck', 'shit', 'damn']
 ###################################
 #####           Misc          #####
 ###################################
-# If enabled chat messaged are written into proxy log
-chatLogging: false
+# If enabled chat messaged are written into logs in the BungeeChatPlus directory
+logChat: true
+logCommands: true
 consoleName: "&4CONSOLE"
 bcpCommandAliases: ['bcp', 'bungeechatplus']
 reloadCommandAliases: ['bcpreload', 'bungeechatplusreload']

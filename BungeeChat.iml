@@ -29,7 +29,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-common:4.0.24.Final" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.trove4j:trove4j:3.0.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:18.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.projectlombok:lombok:1.14.8" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:VaultAPI:1.4" level="project" />
     <orderEntry type="library" name="Maven: org.mcstats.bungee:metrics:R7" level="project" />

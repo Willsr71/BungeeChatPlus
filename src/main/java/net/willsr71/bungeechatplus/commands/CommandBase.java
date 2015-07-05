@@ -21,13 +21,11 @@ public class CommandBase extends Command {
             cs.sendMessage(ChatParser.parse("&7You must specify a command to execute"));
             return;
         }
-        String command=args[0].toLowerCase();
-        String commandargs="";
+        String command="";
         for (String arg: args){
-            commandargs = (commandargs + " " + arg).trim();
+            command = (command + " " + arg).trim();
         }
 
-        plugin.getLogger().log(Level.INFO, commandargs);
-        plugin.getProxy().getPluginManager().dispatchCommand(cs, commandargs);
+        plugin.getProxy().getPluginManager().dispatchCommand(cs, command);
     }
 }

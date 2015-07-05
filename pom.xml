@@ -6,7 +6,7 @@
 
     <groupId>net.willsr71</groupId>
     <artifactId>bungeechatplus</artifactId>
-    <version>1.7</version>
+    <version>1.8-DEV</version>
 
     <repositories>
         <repository>
@@ -79,13 +79,6 @@
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.8-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.14.8</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
