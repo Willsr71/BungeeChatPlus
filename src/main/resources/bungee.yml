@@ -1,6 +1,6 @@
 name: BungeeChatPlus
 main : net.willsr71.bungeechatplus.BungeeChatPlus
-version: 1.7
+version: 1.8
 description: A capable chat plugin for bungee
 author: Willsr71
 website: http://willsr71.net/
@@ -14,8 +14,8 @@ commands:
     usage: /bcpreload
     aliases: [bcpreload, bungeechatplusreload]
   togglechat:
-    description: Toggle global/locla chat
-    usage: /togglechat
+    description: Toggle global/local chat
+    usage: /togglechat <player>
     aliases: [togglechat, chattoggle]
   globalchat:
     description: Send global chat message
@@ -62,6 +62,9 @@ permissions:
   bungeechatplus.ignorecapsprevention:
     default: op
     description: Ignore caps filtering
+  bungeechatplus.togglechat.others:
+    default: op
+    description: Ability to toggle other's local/global chat
   bungeechatplus.chat.color:
     desfault: op
     description: The ability to usee color codes in chat

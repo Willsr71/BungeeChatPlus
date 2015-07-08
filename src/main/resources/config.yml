@@ -96,12 +96,15 @@ consoleName: "&4CONSOLE"
 bcpCommandAliases: ['bcp', 'bungeechatplus']
 reloadCommandAliases: ['bcpreload', 'bungeechatplusreload']
 unknownTarget: "&7%target% is not on the server"
+replaceVarError: "&cError replacing variables. Sending as is. Have you installed BungeeChatPlus on this server?"
 internalError: "&cAn internal error occurred while processing your chat message."
 alwaysGlobalChat: true
 allowBBCodeInVariables: false
 excludeServers: []
-versionDontTouch:
-  seriouslyThisWillEraseYourConfig: '1.8'
+dontTouch:
+  debug: false
+  version:
+    seriouslyThisWillEraseYourConfig: '1.8'
 
 ###################################
 #####          Regex          #####

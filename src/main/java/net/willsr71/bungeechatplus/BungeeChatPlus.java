@@ -33,17 +33,18 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public final Map<String, String> persistentConversations = new HashMap<>();
     public final Map<String, List<String>> ignoredPlayers = new HashMap<>();
     public final Map<String, AntiSpamData> spamDataMap = new HashMap<>();
-    public Configuration config;
-    public Configuration playerLists;
-    public static BungeeChatPlus instance;
-
     public List<String> localPlayers = new ArrayList<>();
     public MuteData mutedPlayers = new MuteData();
     public List<String> excludedServers = new ArrayList<>();
     public List<String> swearList = new ArrayList<>();
+    private FileInputStream configFile = null;
+    private FileInputStream playerListsFile = null;
+    public boolean debug = false;
 
+    public Configuration config;
+    public Configuration playerLists;
+    public static BungeeChatPlus instance;
     public BukkitBridge bukkitBridge;
-    public VersionChecker versionChecker = new VersionChecker();
 
     @Override
     public void onEnable() {
@@ -53,6 +54,12 @@ public class BungeeChatPlus extends Plugin implements Listener {
         saveResource("playerLists.yml");
 
         try {
+            configFile = new FileInputStream(new File(getDataFolder(), "config.yml"));
+            playerListsFile = new FileInputStream(new File(getDataFolder(), "playerLists.yml"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        /*try {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(new FileInputStream(new File(getDataFolder(), "config.yml")), Charsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,22 +69,11 @@ public class BungeeChatPlus extends Plugin implements Listener {
             playerLists = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(new FileInputStream(new File(getDataFolder(), "playerLists.yml")), Charsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        try {
-            reloadConfig();
-        }catch (FileNotFoundException e){
-            getLogger().log(Level.SEVERE, "Failed for load BungeeChatPlus Configs", e);
-        }
-
-        if(!versionChecker.isConfigVersionUpToDate()){
-            saveResource("config.yml", true);
-            try {
-                reloadConfig();
-            }catch (FileNotFoundException e){
-                getLogger().log(Level.SEVERE, "Failed for load BungeeChatPlus Configs", e);
-            }
-        }
+        reloadConfig();
+        if(debug) getLogger().log(Level.INFO, "Debug mode is ENABLED");
+        else getLogger().log(Level.INFO, "Debug mode is DISABLED");
 
         excludedServers = config.getStringList("excludeServers");
 
@@ -224,7 +220,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void onTabComplete(TabCompleteEvent event) {
         String commandLine = event.getCursor();
         if (!commandLine.startsWith("/")) return;
-        if (!commandLine.startsWith("@")) return;
         if (commandLine.matches("^/(?:" + Joiner.on('|').join(Iterables.concat(config.getStringList("pmCommandAliases"),
                 config.getStringList("pmConversationCommandAliases"))) + ").*$")) {
             event.getSuggestions().clear();
@@ -274,9 +269,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
             try {
                 text = bukkitBridge.replaceVariables(player, text, "");
             }catch (Exception e){
-                player.sendMessage(ChatParser.parse("&cChat formatting failed. Reverting to backup."));
-                text = config.getString("backupChatFormat");
-                text = replaceVars(player, text, message);
+                player.sendMessage(ChatParser.parse(config.getString("replaceVarError")));
+                getLogger().log(Level.WARNING, "Failed to parse bukkit variables. Is BungeeChatPlus installed on that server?", e);
+                //text = config.getString("backupChatFormat");
+                //text = replaceVars(player, text, message);
             }
 
             // broadcast message
@@ -286,14 +282,13 @@ public class BungeeChatPlus extends Plugin implements Listener {
                     continue;
                 Server server = target.getServer();
                 if (server == null || !excludedServers.contains(server.getInfo().getName())) {
-                    if(localPlayers.contains(target.getName())){
-                        if(player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()) || player.hasPermission("bungeechatplus.forceglobalchat")){
+                    if (localPlayers.contains(target.getName())) {
+                        if (player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()) || player.hasPermission("bungeechatplus.forceglobalchat")) {
                             target.sendMessage(msg);
                         }
-                    }else {
+                    } else {
                         target.sendMessage(msg);
                     }
-                    //player.sendMessage(ChatParser.parse(target.getName() + " -> " + player.getName() + " = " + (player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()))));
                 }
             }
             BCPLogger.logChat(player, message);
@@ -440,7 +435,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
                 }
                 total = total + 1;
             }
-            //sendGlobalConsoleChatMessage(Math.floorDiv(uppercase * 100, total) + " > " + config.getInt("antiCapsActivationPercentage"));
+            if(debug) sendGlobalConsoleChatMessage(Math.floorDiv(uppercase * 100, total) + " > " + config.getInt("antiCapsActivationPercentage"));
             isUsingCaps = (Math.floorDiv(uppercase * 100, total) > config.getInt("antiCapsActivationPercentage"));
         }else{
             isUsingCaps = false;
@@ -486,10 +481,33 @@ public class BungeeChatPlus extends Plugin implements Listener {
         if (!getDataFolder().exists()) getDataFolder().mkdir();
         File file = new File(getDataFolder(), name);
 
-        if(file.exists() && !overwrite) return;
         try {
+            if(!(configFile == null)) configFile.close();
+            if(!(playerListsFile == null)) playerListsFile.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        if(file.exists() && overwrite){
+            if(debug) getLogger().log(Level.INFO, "File exists and override enabled. Deleting...");
+            boolean deleted = file.delete();
+            if(debug) getLogger().log(Level.INFO, "Deletion " + deleted);
+        }
+        if(file.exists()){
+            if(debug) getLogger().log(Level.INFO, "File exists, exiting...");
+            return;
+        }
+        try {
+            if(debug) getLogger().log(Level.INFO, "File does not exist, copying...");
             Files.copy(getResourceAsStream(name), file.toPath());
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            configFile = new FileInputStream(new File(getDataFolder(), "config.yml"));
+            playerListsFile = new FileInputStream(new File(getDataFolder(), "playerLists.yml"));
+        }catch(IOException e){
             e.printStackTrace();
         }
     }
@@ -523,16 +541,23 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return text;
     }
 
-    public void reloadConfig() throws FileNotFoundException {
-        config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(new FileInputStream(new File(getDataFolder(), "config.yml")), Charsets.UTF_8));
-        playerLists = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(new FileInputStream(new File(getDataFolder(), "playerLists.yml")), Charsets.UTF_8));
+    public void reloadConfig(){
+        config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(configFile, Charsets.UTF_8));
+        playerLists = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(playerListsFile, Charsets.UTF_8));
+
         localPlayers = playerLists.getStringList("localPlayers");
+        debug = config.getBoolean("dontTouch.debug");
         if(playerLists.get("mutedPlayers")==null) return;
         if(playerLists.getString("mutedPlayers").equals("None")) return;
-        getLogger().log(Level.INFO, playerLists.get("mutedPlayers").toString());
+        if(debug) getLogger().log(Level.INFO, playerLists.get("mutedPlayers").toString());
         Configuration playerList = playerLists.getSection("mutedPlayers");
         for (String player : playerList.getKeys()) {
             mutedPlayers.setMuted(player, playerList.getString(player + ".reason"), playerList.getString(player + ".expire"));
+        }
+
+        if(!isConfigVersionUpToDate()){
+            saveResource("config.yml", true);
+            reloadConfig();
         }
     }
 
@@ -545,8 +570,8 @@ public class BungeeChatPlus extends Plugin implements Listener {
                 String player = muted[0];
                 String reason = muted[1];
                 String expire = muted[2];
-                getLogger().log(Level.INFO, "mutedPlayers." + player + ".reason = " + reason);
-                getLogger().log(Level.INFO, "mutedPlayers." + player + ".expire = " + expire);
+                if(debug) getLogger().log(Level.INFO, "mutedPlayers." + player + ".reason = " + reason);
+                if(debug) getLogger().log(Level.INFO, "mutedPlayers." + player + ".expire = " + expire);
                 playerLists.set("mutedPlayers." + player + ".reason", reason);
                 playerLists.set("mutedPlayers." + player + ".expire", expire);
             }
@@ -583,5 +608,14 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void startConversation(ProxiedPlayer player, ProxiedPlayer target) {
         persistentConversations.put(player.getName(), target.getName());
         player.sendMessage(ChatParser.parse(config.getString("pmConversationStartMessage").replace("%target%", wrapVariable(target.getName()))));
+    }
+
+    public boolean isConfigVersionUpToDate(){
+        String version = "1.8";
+        if(config.get("dontTouch.version.seriouslyThisWillEraseYourConfig")==null) return false;
+        String configVersion = config.getString("dontTouch.version.seriouslyThisWillEraseYourConfig");
+        if(debug) getLogger().log(Level.INFO, "Version: " + version + ", Config version: " + configVersion + ", " + version.equals(configVersion));
+        return version.equals(configVersion);
+        //this will be more elaborate in the future
     }
 }
