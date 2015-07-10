@@ -1,6 +1,5 @@
 package net.willsr71.bungeechatplus;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import net.md_5.bungee.api.ChatColor;
@@ -14,15 +13,12 @@ import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.willsr71.bungeechatplus.bukkit.Constants;
 import net.willsr71.bungeechatplus.commands.*;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -444,45 +440,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }
         return getProxy().getPlayer(t);
     }
-
-    /*private void saveResource(String name){
-        saveResource(name, false);
-    }
-
-    private void saveResource(String name, boolean overwrite) {
-        if (!getDataFolder().exists()) getDataFolder().mkdir();
-        File file = new File(getDataFolder(), name);
-
-        try {
-            if(!(configFile == null)) configFile.close();
-            if(!(playerListsFile == null)) playerListsFile.close();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-
-        if(file.exists() && overwrite){
-            if(debug) getLogger().log(Level.INFO, "File exists and override enabled. Deleting...");
-            boolean deleted = file.delete();
-            if(debug) getLogger().log(Level.INFO, "Deletion " + deleted);
-        }
-        if(file.exists()){
-            if(debug) getLogger().log(Level.INFO, "File exists, exiting...");
-            return;
-        }
-        try {
-            if(debug) getLogger().log(Level.INFO, "File does not exist, copying...");
-            Files.copy(getResourceAsStream(name), file.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            configFile = new FileInputStream(new File(getDataFolder(), "config.yml"));
-            playerListsFile = new FileInputStream(new File(getDataFolder(), "playerLists.yml"));
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }*/
 
     public String replaceRegex(String str) {
         List list = config.getList("regex");

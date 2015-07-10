@@ -1,5 +1,6 @@
 package net.willsr71.bungeechatplus.bukkit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -45,10 +46,7 @@ public class BungeeChatPlusBukkit extends JavaPlugin implements Listener {
 
         // check for vault hook
         Plugin vault = getServer().getPluginManager().getPlugin("Vault");
-        if (vault != null) {
-            getLogger().info("hooked Vault");
-            vaultHook = new VaultHook(this);
-        }
+        if (vault != null) vaultHook = new VaultHook(this);
 
         // Enable Metrics
         try {
@@ -61,26 +59,26 @@ public class BungeeChatPlusBukkit extends JavaPlugin implements Listener {
     }
 
     private void processChatMessage(Player player, String text, String prefix, int id, boolean allowBBCode) {
-        if (vaultHook != null) {
-            vaultHook.refresh();
-        }
-        if (vaultHook != null && text.contains("%" + prefix + "group%")) {
-            text = text.replace("%" + prefix + "group%", wrapVariable(vaultHook.getGroup(player), allowBBCode));
-        }
-        if (vaultHook != null && text.contains("%" + prefix + "prefix%")) {
-            text = text.replace("%" + prefix + "prefix%", wrapVariable(vaultHook.getPrefix(player), allowBBCode));
-        }
-        if (vaultHook != null && text.contains("%" + prefix + "suffix%")) {
-            text = text.replace("%" + prefix + "suffix%", wrapVariable(vaultHook.getSuffix(player), allowBBCode));
-        }
-        if (vaultHook != null && text.contains("%" + prefix + "balance%")) {
-            text = text.replace("%" + prefix + "balance%", wrapVariable(vaultHook.getBalance(player), allowBBCode));
-        }
-        if (vaultHook != null && text.contains("%" + prefix + "currency%")) {
-            text = text.replace("%" + prefix + "currency%", wrapVariable(vaultHook.getCurrencyName(), allowBBCode));
-        }
-        if (vaultHook != null && text.contains("%" + prefix + "currencyPl%")) {
-            text = text.replace("%" + prefix + "currencyPl%", wrapVariable(vaultHook.getCurrencyNamePl(), allowBBCode));
+        if(vaultHook != null) vaultHook.refresh();
+        if(vaultHook != null) {
+            if (text.contains("%" + prefix + "group%")) {
+                text = text.replace("%" + prefix + "group%", wrapVariable(vaultHook.getGroup(player), allowBBCode));
+            }
+            if (text.contains("%" + prefix + "prefix%")) {
+                text = text.replace("%" + prefix + "prefix%", wrapVariable(vaultHook.getPrefix(player), allowBBCode));
+            }
+            if (text.contains("%" + prefix + "suffix%")) {
+                text = text.replace("%" + prefix + "suffix%", wrapVariable(vaultHook.getSuffix(player), allowBBCode));
+            }
+            if (text.contains("%" + prefix + "balance%")) {
+                text = text.replace("%" + prefix + "balance%", wrapVariable(vaultHook.getBalance(player), allowBBCode));
+            }
+            if (text.contains("%" + prefix + "currency%")) {
+                text = text.replace("%" + prefix + "currency%", wrapVariable(vaultHook.getCurrencyName(), allowBBCode));
+            }
+            if (text.contains("%" + prefix + "currencyPl%")) {
+                text = text.replace("%" + prefix + "currencyPl%", wrapVariable(vaultHook.getCurrencyNamePl(), allowBBCode));
+            }
         }
         if (text.contains("%" + prefix + "tabName%")) {
             text = text.replace("%" + prefix + "tabName%", wrapVariable(player.getPlayerListName(), allowBBCode));
