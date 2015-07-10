@@ -15,6 +15,7 @@ public class CommandReload extends Command {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        plugin.reload();
         cs.sendMessage(ChatParser.parse("[color=blue][[color=red]BungeeChatPlus[/color]][/color] &aConfiguration has been reloaded."));
     }
 }

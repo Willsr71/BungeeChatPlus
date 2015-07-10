@@ -11,29 +11,29 @@ import java.nio.file.Files;
 public class ConfigManager {
     private BungeeChatPlus plugin;
 
-    private String configName;
+    private String name;
     private File file;
-    private Configuration fileConfig;
+    private Configuration config;
 
-    public ConfigManager(BungeeChatPlus plugin, String configName){
+    public ConfigManager(BungeeChatPlus plugin, String name){
         this.plugin = plugin;
-        this.configName = configName;
+        this.name = name;
         File dataFolder = plugin.getDataFolder();
         if(!dataFolder.exists()) dataFolder.mkdirs();
 
-        file = new File(dataFolder, configName);
+        file = new File(dataFolder, name);
         if(!file.exists()) createConfig();
 
         reloadConfig();
     }
 
     public Configuration getConfig(){
-        return fileConfig;
+        return config;
     }
 
     public void reloadConfig(){
         try {
-            fileConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ public class ConfigManager {
 
     private void createConfig(){
         try {
-            Files.copy(plugin.getResourceAsStream(configName), file.toPath());
+            Files.copy(plugin.getResourceAsStream(name), file.toPath());
         }catch (IOException e){
             e.printStackTrace();
         }

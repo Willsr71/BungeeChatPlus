@@ -6,7 +6,7 @@
 
     <groupId>net.willsr71</groupId>
     <artifactId>bungeechatplus</artifactId>
-    <version>1.8-DEV</version>
+    <version>1.8</version>
 
     <repositories>
         <repository>
