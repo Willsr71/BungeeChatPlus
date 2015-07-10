@@ -17,11 +17,8 @@ public class BungeeChatPlusBukkit extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
 
-        getServer().getMessenger().registerOutgoingPluginChannel(this,
-                Constants.channel);
-        getServer().getMessenger().registerIncomingPluginChannel(this,
-                Constants.channel, new PluginMessageListener() {
-
+        getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.channel);
+        getServer().getMessenger().registerIncomingPluginChannel(this, Constants.channel, new PluginMessageListener() {
                     @Override
                     public void onPluginMessageReceived(String string, Player player, byte[] bytes) {
                         DataInputStream in = new DataInputStream(

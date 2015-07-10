@@ -77,14 +77,14 @@ antiSpamMuteTime: 60
 antiSpamDenyMessage: "&cYou have sent to many messages. You must wait 1 minute before sending messages again."
 
 antiCapsEnabled: true
-antiCapsMinChatLength: 3
+antiCapsActivationLength: 3
 antiCapsActivationPercentage: 50
 antiCapsAutoLowercase: true
 antiCapsMessage: "&bPlease refrain from using caps in chat"
 
 antiSwearEnabled: true
 antiSwearMessage: "&bPlease refrain from swearing in chat"
-antiSwearList: ['fuck', 'shit', 'damn']
+antiSwearList: ['fuck', 'shit', 'feel free to add *shit* in this']
 
 ###################################
 #####           Misc          #####

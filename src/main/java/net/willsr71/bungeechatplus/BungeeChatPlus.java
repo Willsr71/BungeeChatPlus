@@ -250,16 +250,11 @@ public class BungeeChatPlus extends Plugin implements Listener {
             message = replaceRegex(message);
             message = applyTagLogic(message);
 
-            // filter chat
-            boolean isCapsing;
-            if(config.getBoolean("antiCapsEnabled")) {
-                isCapsing = isUsingCaps(message);
-                if (isCapsing && config.getBoolean("antiCapsAutoLowercase")) {
-                    message = message.toLowerCase();
-                }
-            }else{
-                isCapsing = false;
-            }
+            // filter caps
+            boolean isCapsing = isUsingCaps(message);
+            if (isCapsing && config.getBoolean("antiCapsAutoLowercase")) message = message.toLowerCase();
+
+            // filter the other stuff
             if(config.getBoolean("antiSwearEnabled")){
                 message = filterSwears(message);
             }
@@ -424,23 +419,18 @@ public class BungeeChatPlus extends Plugin implements Listener {
     }
 
     public boolean isUsingCaps(String text){
-        boolean isUsingCaps;
-        if(text.length() > config.getInt("antiCapsMinChatLength")) {
-            int uppercase = 0;
-            int total = 0;
-            for (int x = 0; x < text.length(); x++) {
-                int c = text.charAt(x);
-                if (c > 64 && c < 91) {
-                    uppercase = uppercase + 1;
-                }
-                total = total + 1;
+        if(!config.getBoolean("antiCapsEnabled")) return false;
+        if (debug) getLogger().log(Level.INFO, text.length() + " <= " + config.getInt("antiCapsActivationLength") + " = " + (text.length() <= config.getInt("antiAntiCapsActivationLength")));
+        if(text.length() <= config.getInt("antiCapsActivationLength")) return false;
+        int uppercase = 0;
+        int total = 0;
+        for (int x = 0; x < text.length(); x++) {
+            if (text.charAt(x) > 64 && text.charAt(x) < 91) {
+                uppercase = uppercase + 1;
             }
-            if(debug) sendGlobalConsoleChatMessage(Math.floorDiv(uppercase * 100, total) + " > " + config.getInt("antiCapsActivationPercentage"));
-            isUsingCaps = (Math.floorDiv(uppercase * 100, total) > config.getInt("antiCapsActivationPercentage"));
-        }else{
-            isUsingCaps = false;
+            total = total + 1;
         }
-        return isUsingCaps;
+        return (Math.floorDiv(uppercase * 100, total) > config.getInt("antiCapsActivationPercentage"));
     }
 
     public String filterSwears(String text){

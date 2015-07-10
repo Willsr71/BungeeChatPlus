@@ -9,13 +9,14 @@ public class MuteData {
         mutedPlayers.add(new String[]{player, reason, expire});
     }
 
-    public void setUnMuted(String player){
+    public boolean setUnMuted(String player){
         for (int x = 0; x < mutedPlayers.size(); x++) {
             if (mutedPlayers.get(x)[0].equals(player)) {
                 mutedPlayers.remove(x);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public void checkMuted(){

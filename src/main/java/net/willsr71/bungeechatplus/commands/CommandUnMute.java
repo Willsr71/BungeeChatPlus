@@ -33,8 +33,8 @@ public class CommandUnMute extends Command {
         }
 
         // add player to mute list
-        if(plugin.mutedPlayers.isMuted(toMute.getName())) {
-            plugin.mutedPlayers.setUnMuted(toMute.getName());
+        //if(plugin.mutedPlayers.isMuted(toMute.getName())) {
+        if(plugin.mutedPlayers.setUnMuted(toMute.getName())) {
             cs.sendMessage(ChatParser.parse(plugin.config.getString("muteUnmuted").replace("%target%", plugin.wrapVariable(toMute.getName()))));
             toMute.sendMessage(ChatParser.parse(plugin.config.getString("mutePardonMessage")));
         }else{
