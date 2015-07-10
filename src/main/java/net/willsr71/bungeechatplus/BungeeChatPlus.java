@@ -37,10 +37,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public MuteData mutedPlayers = new MuteData();
     public List<String> excludedServers = new ArrayList<>();
     public List<String> swearList = new ArrayList<>();
-    private FileInputStream configFile = null;
-    private FileInputStream playerListsFile = null;
     public boolean debug = false;
 
+    public ConfigManager configManager;
+    public ConfigManager playerListsManager;
     public Configuration config;
     public Configuration playerLists;
     public static BungeeChatPlus instance;
@@ -50,28 +50,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void onEnable() {
         instance = this;
 
-        saveResource("config.yml");
-        saveResource("playerLists.yml");
+        configManager = new ConfigManager(this, "config.yml");
+        playerListsManager = new ConfigManager(this, "playerLists.yml");
+        reload();
 
-        try {
-            configFile = new FileInputStream(new File(getDataFolder(), "config.yml"));
-            playerListsFile = new FileInputStream(new File(getDataFolder(), "playerLists.yml"));
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        /*try {
-            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(new FileInputStream(new File(getDataFolder(), "config.yml")), Charsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            playerLists = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(new FileInputStream(new File(getDataFolder(), "playerLists.yml")), Charsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-        reloadConfig();
         if(debug) getLogger().log(Level.INFO, "Debug mode is ENABLED");
         else getLogger().log(Level.INFO, "Debug mode is DISABLED");
 
@@ -463,7 +445,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return getProxy().getPlayer(t);
     }
 
-    private void saveResource(String name){
+    /*private void saveResource(String name){
         saveResource(name, false);
     }
 
@@ -500,7 +482,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }catch(IOException e){
             e.printStackTrace();
         }
-    }
+    }*/
 
     public String replaceRegex(String str) {
         List list = config.getList("regex");
@@ -531,9 +513,16 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return text;
     }
 
-    public void reloadConfig(){
-        config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(configFile, Charsets.UTF_8));
-        playerLists = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new InputStreamReader(playerListsFile, Charsets.UTF_8));
+    public void reload(){
+        configManager.reloadConfig();
+        playerListsManager.reloadConfig();
+        config = configManager.getConfig();
+        playerLists = playerListsManager.getConfig();
+        String version = config.getString("dontTouch.version.seriouslyThisWillEraseYourConfig");
+        if(version == null || !version.equals("1.8")){
+            configManager.replaceConfig();
+            config = configManager.getConfig();
+        }
 
         localPlayers = playerLists.getStringList("localPlayers");
         debug = config.getBoolean("dontTouch.debug");
@@ -543,11 +532,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
         Configuration playerList = playerLists.getSection("mutedPlayers");
         for (String player : playerList.getKeys()) {
             mutedPlayers.setMuted(player, playerList.getString(player + ".reason"), playerList.getString(player + ".expire"));
-        }
-
-        if(!isConfigVersionUpToDate()){
-            saveResource("config.yml", true);
-            reloadConfig();
         }
     }
 
@@ -568,11 +552,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }else{
             playerLists.set("mutedPlayers", "None");
         }
-        try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(playerLists, new File(getDataFolder(), "playerLists.yml"));
-        }catch (IOException e){
-            getLogger().log(Level.SEVERE, "Error saving Player Lists.", e);
-        }
+        playerListsManager.saveConfig(playerLists);
     }
 
     public String applyTagLogic(String text) {
@@ -598,14 +578,5 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void startConversation(ProxiedPlayer player, ProxiedPlayer target) {
         persistentConversations.put(player.getName(), target.getName());
         player.sendMessage(ChatParser.parse(config.getString("pmConversationStartMessage").replace("%target%", wrapVariable(target.getName()))));
-    }
-
-    public boolean isConfigVersionUpToDate(){
-        String version = "1.8";
-        if(config.get("dontTouch.version.seriouslyThisWillEraseYourConfig")==null) return false;
-        String configVersion = config.getString("dontTouch.version.seriouslyThisWillEraseYourConfig");
-        if(debug) getLogger().log(Level.INFO, "Version: " + version + ", Config version: " + configVersion + ", " + version.equals(configVersion));
-        return version.equals(configVersion);
-        //this will be more elaborate in the future
     }
 }

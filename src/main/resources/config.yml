@@ -73,6 +73,7 @@ ignoreCommandAliases: ['ignore', 'ignoreplayer']
 #####        Anti-Spam        #####
 ###################################
 antiSpamEnabled: true
+# antiSpamMuteTime is not implemented yet.
 antiSpamMuteTime: 60
 antiSpamDenyMessage: "&cYou have sent to many messages. You must wait 1 minute before sending messages again."
 
@@ -84,7 +85,7 @@ antiCapsMessage: "&bPlease refrain from using caps in chat"
 
 antiSwearEnabled: true
 antiSwearMessage: "&bPlease refrain from swearing in chat"
-antiSwearList: ['fuck', 'shit', 'feel free to add *shit* in this']
+antiSwearList: ['fuck', 'shit', 'addSomethingElseAlready']
 
 ###################################
 #####           Misc          #####
