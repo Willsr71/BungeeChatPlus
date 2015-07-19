@@ -1,12 +1,33 @@
 ###################################
 ##### Bungee Chat Plus Config #####
 ###################################
-# This is the line for formatting chat messages
-# Usable variables are: %player%  %message% %prefix% %suffix% %type% %forced%
-# %type% and %forced% can be configured further using varGlobalChat etc.
-chatFormat: "&a[&9%type%%forced%&a] &9%server% %prefix% %tabName%&a:&r%suffix% %message%"
+# Always usable variables:
+# %player%, %name% - Player display name
+# %message% - Message being sent
+# %server% - Server name
+# %server-players% - Number of players on the server
+# %server-motd% - Server MOTD
+# %type% - Local or global chat. Can be configured using varGlobalChat and varLocalChat
+# %forced% - Whether the player is forced or not. Can be configured using varForcedGlobal and varNotForced
+# %ping% - The player's current ping
+#
+# Variables that can be used if BungeeChatPlus is installed on the Bukkit/Spigot server
+# %tabName% - Player tab Name
+# %world% - Player current dimension name
+# %health% - Player current health
+# %level% - Player current level
+#
+# Variabled that can be user if Vault is installed along with BungeeChatPlus on the Bukkit/Spigot server
+# %group% - Player group
+# %prefix% - Player prefix
+# %suffix% - Player suffix
+# %balance%, %currency%, %currencyPl% - Money related stuffs
+#
+# The format used for all chat messages
+chatFormat: "&a[&9%type%%forced%&a] [&9%server%&a] [&9%prefix%&a] &9%name%&a:&r %message%"
 # If connection with the bukkitbridge fails, it will still send the message with the backup format.
-backupChatFormat: "<%player%>&r %message%"
+# YOU CAN ONLY USE 'ALWAYS USABLE VARIABLES' IN THIS MESSAGE
+backupChatFormat: "%&a[&cERR&a] [&9%type%%forced%&a] [&9%server%&a] &9%name%&a:&r %message%"
 
 varGlobalChat: "Global"
 varLocalChat: "Local"
@@ -25,8 +46,8 @@ localChatCommandAliases: ['local', 'l']
 #####    Private Messaging    #####
 ###################################
 pmEnabled: true
-pmSend: "&b[suggest=/w %target% ]You -> %target%[/suggest]&f > [i]%message%[/i]"
-pmReceive: "&b[suggest=/w %player% ]%player% -> me[/suggest] &f> [i]%message%[/i]"
+pmSend: "&b[suggest=/w %target-name% ]You -> %target-name%[/suggest]&f > [i]%message%[/i]"
+pmReceive: "&b[suggest=/w %sender-name% ]%sender-name% -> me[/suggest] &f> [i]%message%[/i]"
 pmUnknownTarget: "&c%target% is not on the server"
 pmPlaySound: true
 pmSound: ORB_PICKUP

@@ -243,9 +243,9 @@ public class BungeeChatPlus extends Plugin implements Listener {
                 text = bukkitBridge.replaceVariables(player, text, "");
             }catch (Exception e){
                 player.sendMessage(ChatParser.parse(config.getString("replaceVarError")));
-                getLogger().log(Level.WARNING, "Failed to parse bukkit variables. Is BungeeChatPlus installed on that server?", e);
-                //text = config.getString("backupChatFormat");
-                //text = replaceVars(player, text, message);
+                getLogger().log(Level.WARNING, "Failed to parse bukkit variables. Is BungeeChatPlus installed?", e);
+                text = config.getString("backupChatFormat");
+                text = replaceVars(player, text, message);
             }
 
             // broadcast message
@@ -317,27 +317,23 @@ public class BungeeChatPlus extends Plugin implements Listener {
         text = preparePlayerChat(text, player);
         text = replaceRegex(text);
 
-        player.sendMessage(ChatParser.parse(
-                bukkitBridge.replaceVariables(target, bukkitBridge.replaceVariables(player, config.getString("pmSend").replace(
-                        "%target%", wrapVariable(target.
-                                getDisplayName())).replace(
-                        "%player%", wrapVariable(player.
-                                getDisplayName())).replace(
-                        "%message%", text), ""), "t")));
-
-        target.sendMessage(ChatParser.parse(
-                bukkitBridge.replaceVariables(target, bukkitBridge.replaceVariables(player, config.getString("pmReceive").replace(
-                        "%target%", wrapVariable(target.
-                                getDisplayName())).replace(
-                        "%player%", wrapVariable(player.
-                                getDisplayName())).replace(
-                        "%message%", text), ""), "t")));
+        player.sendMessage(ChatParser.parse(replaceVars(player, target, config.getString("pmSend"), text)));
+        target.sendMessage(ChatParser.parse(replaceVars(player, target, config.getString("pmReceive"), text)));
 
         replyTarget.put(target.getName(), player.getName());
 
         if (config.getBoolean("playSoundPrivateMessage", true)) {
             bukkitBridge.playSound(target, config.getString("pmSound"));
         }
+    }
+
+    public String replaceVars(ProxiedPlayer player, ProxiedPlayer target, String format, String message){
+        format = format.replace("%sender-", "%");
+        replaceVars(player, format, message);
+        format = format.replace("%target-", "%");
+        replaceVars(player, format, message);
+        format = format.replace("%message%", message);
+        return format;
     }
 
     public String replaceVars(ProxiedPlayer player, String format, String message){
@@ -358,6 +354,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }
 
         format = format.replace("%player%", wrapVariable(player.getDisplayName()));
+        format = format.replace("%name%", wrapVariable(player.getDisplayName()));
         format = format.replace("%message%", wrapVariable(message));
         format = format.replace("%server%", wrapVariable(serverInfo.getName()));
         format = format.replace("%server-players%", wrapVariable(serverInfo.getPlayers().size() + ""));
