@@ -1,8 +1,8 @@
 package net.willsr71.bungeechatplus.commands;
 
-import net.willsr71.bungeechatplus.BungeeChatPlus;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
+import net.willsr71.bungeechatplus.BungeeChatPlus;
 import net.willsr71.bungeechatplus.ChatParser;
 
 public class CommandToggleChat extends Command {

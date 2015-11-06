@@ -10,10 +10,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import java.util.logging.Level;
 
 public class VaultHook {
-    BungeeChatPlusBukkit plugin;
     public static Permission permission = null;
     public static Economy economy = null;
     public static Chat chat = null;
+    BungeeChatPlusBukkit plugin;
 
     public VaultHook(BungeeChatPlusBukkit plugin) {
         this.plugin = plugin;
@@ -28,7 +28,7 @@ public class VaultHook {
 
     private boolean setupChat() {
         RegisteredServiceProvider<Chat> chatProvider = Bukkit.getServer().getServicesManager().getRegistration(Chat.class);
-        if(chatProvider == null){
+        if (chatProvider == null) {
             plugin.getLogger().log(Level.SEVERE, "Error getting chat hook. Is vault installed?");
             return false;
         }
@@ -39,7 +39,7 @@ public class VaultHook {
 
     private boolean setupPermissions() {
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-        if(permissionProvider == null){
+        if (permissionProvider == null) {
             plugin.getLogger().log(Level.SEVERE, "Error getting Permissions hook. Is vault installed?");
             return false;
         }
@@ -50,7 +50,7 @@ public class VaultHook {
 
     private boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        if(economyProvider == null){
+        if (economyProvider == null) {
             plugin.getLogger().log(Level.WARNING, "Error getting Economy hook.");
             return false;
         }
@@ -60,32 +60,32 @@ public class VaultHook {
     }
 
     public String getGroup(Player player) {
-        if(permission == null) return "ERR";
+        if (permission == null) return "ERR";
         return permission.getPrimaryGroup(player);
     }
 
     public String getPrefix(Player player) {
-        if(chat == null) return "ERR";
+        if (chat == null) return "ERR";
         return chat.getPlayerPrefix(player);
     }
 
     public String getSuffix(Player player) {
-        if(chat == null) return "ERR";
+        if (chat == null) return "ERR";
         return chat.getPlayerSuffix(player);
     }
 
     public String getBalance(Player player) {
-        if(economy == null) return "0";
+        if (economy == null) return "0";
         return Double.toString(economy.getBalance(player.getName()));
     }
 
     public String getCurrencyName() {
-        if(economy == null) return "$";
+        if (economy == null) return "$";
         return economy.currencyNameSingular();
     }
 
     public String getCurrencyNamePl() {
-        if(economy == null) return "$";
+        if (economy == null) return "$";
         return economy.currencyNamePlural();
     }
 }

@@ -1,11 +1,11 @@
 package net.willsr71.bungeechatplus;
 
-import net.willsr71.bungeechatplus.bukkit.Constants;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.willsr71.bungeechatplus.bukkit.Constants;
 
 import java.io.*;
 import java.util.concurrent.ConcurrentHashMap;

@@ -18,13 +18,14 @@ import net.md_5.bungee.event.EventPriority;
 import net.willsr71.bungeechatplus.bukkit.Constants;
 import net.willsr71.bungeechatplus.commands.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BungeeChatPlus extends Plugin implements Listener {
+    public static BungeeChatPlus instance;
     public final Map<String, String> replyTarget = new HashMap<>();
     public final Map<String, String> persistentConversations = new HashMap<>();
     public final Map<String, List<String>> ignoredPlayers = new HashMap<>();
@@ -34,12 +35,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public List<String> excludedServers = new ArrayList<>();
     public List<String> swearList = new ArrayList<>();
     public boolean debug = false;
-
     public ConfigManager configManager;
     public ConfigManager playerListsManager;
     public Configuration config;
     public Configuration playerLists;
-    public static BungeeChatPlus instance;
     public BukkitBridge bukkitBridge;
 
     @Override
@@ -50,7 +49,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         playerListsManager = new ConfigManager(this, "playerLists.yml");
         reload();
 
-        if(debug) getLogger().log(Level.INFO, "Debug mode is ENABLED");
+        if (debug) getLogger().log(Level.INFO, "Debug mode is ENABLED");
         else getLogger().log(Level.INFO, "Debug mode is DISABLED");
 
         excludedServers = config.getStringList("excludeServers");
@@ -72,30 +71,31 @@ public class BungeeChatPlus extends Plugin implements Listener {
         super.getProxy().getPluginManager().registerCommand(this,
                 new CommandReload(this, aliases.get(0), "bungeechatplus.reload", aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
 
-        if(config.getBoolean("toggleChatCommandEnabled", true)){
+        if (config.getBoolean("toggleChatCommandEnabled", true)) {
             aliases = config.getStringList("toggleChatCommandAliases");
             if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("togglechat", "chattoggle");
             super.getProxy().getPluginManager().registerCommand(this,
                     new CommandToggleChat(this, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
         }
 
-        if(config.getBoolean("globalChatCommandEnabled", true)){
+        if (config.getBoolean("globalChatCommandEnabled", true)) {
             aliases = config.getStringList("globalChatCommandAliases");
             if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("global", "g");
             super.getProxy().getPluginManager().registerCommand(this,
                     new CommandGlobalChat(this, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
         }
 
-        if(config.getBoolean("localChatCommandEnabled", true)){
+        if (config.getBoolean("localChatCommandEnabled", true)) {
             aliases = config.getStringList("localChatCommandAliases");
             if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("local", "l");
             super.getProxy().getPluginManager().registerCommand(this,
                     new CommandLocalChat(this, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
         }
 
-        if(config.getBoolean("pmEnabled", true)){
+        if (config.getBoolean("pmEnabled", true)) {
             aliases = config.getStringList("pmCommandAliases");
-            if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("w", "msg", "message", "tell", "whisper", "pm");
+            if (aliases == null || aliases.isEmpty())
+                aliases = Arrays.asList("w", "msg", "message", "tell", "whisper", "pm");
             super.getProxy().getPluginManager().registerCommand(this,
                     new CommandMessage(this, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
 
@@ -110,7 +110,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
                     new CommandConversation(this, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
         }
 
-        if(config.getBoolean("muteEnabled", true)){
+        if (config.getBoolean("muteEnabled", true)) {
             aliases = config.getStringList("muteCommandAliases");
             if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("mute", "bungeemute");
             super.getProxy().getPluginManager().registerCommand(this,
@@ -122,12 +122,13 @@ public class BungeeChatPlus extends Plugin implements Listener {
                     new CommandUnMute(this, aliases.get(0), "bungeechatplus.mute", aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
 
             aliases = config.getStringList("muteListCommandAliases");
-            if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("mutelist", "bungeemutelist", "listmuted", "bungeelistmuted");
+            if (aliases == null || aliases.isEmpty())
+                aliases = Arrays.asList("mutelist", "bungeemutelist", "listmuted", "bungeelistmuted");
             super.getProxy().getPluginManager().registerCommand(this,
                     new CommandListMuted(this, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1])));
         }
 
-        if(config.getBoolean("ignoreEnabled", true)){
+        if (config.getBoolean("ignoreEnabled", true)) {
             aliases = config.getStringList("ignoreCommandAliases");
             if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("ignore", "ignoreplayer");
             super.getProxy().getPluginManager().registerCommand(this,
@@ -153,7 +154,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         final ProxiedPlayer player = (ProxiedPlayer) event.getSender();
 
         // ignore commands
-        if (event.isCommand()){
+        if (event.isCommand()) {
             BCPLogger.logCommand(player, event.getMessage());
             return;
         }
@@ -222,8 +223,8 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
     public void sendGlobalChatMessage(ProxiedPlayer player, String message) {
         try {
-            if(checkMuted(player)) return;
-            if(checkSpam(player)) return;
+            if (checkMuted(player)) return;
+            if (checkSpam(player)) return;
             message = preparePlayerChat(message, player);
             message = replaceRegex(message);
             message = applyTagLogic(message);
@@ -233,7 +234,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             if (isCapsing && config.getBoolean("antiCapsAutoLowercase")) message = message.toLowerCase();
 
             // filter the other stuff
-            if(config.getBoolean("antiSwearEnabled")){
+            if (config.getBoolean("antiSwearEnabled")) {
                 message = filterSwears(message);
             }
 
@@ -241,7 +242,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             text = replaceVars(player, text, message);
             try {
                 text = bukkitBridge.replaceVariables(player, text, "");
-            }catch (Exception e){
+            } catch (Exception e) {
                 player.sendMessage(ChatParser.parse(config.getString("replaceVarError")));
                 getLogger().log(Level.WARNING, "Failed to parse bukkit variables. Is BungeeChatPlus installed?", e);
                 text = config.getString("backupChatFormat");
@@ -266,7 +267,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             }
             BCPLogger.logChat(player, message);
 
-            if(isCapsing) player.sendMessage(ChatParser.parse(config.getString("antiCapsMessage")));
+            if (isCapsing) player.sendMessage(ChatParser.parse(config.getString("antiCapsMessage")));
         } catch (Throwable th) {
             try {
                 player.sendMessage(ChatParser.parse(config.getString("internalError")));
@@ -296,7 +297,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
                     target.sendMessage(msg);
                 }
             }
-            if(config.getBoolean("logChat", false)){
+            if (config.getBoolean("logChat", false)) {
                 getProxy().getLogger().info(config.getString("consoleName", "SERVER") + ": " + message);
             }
         } catch (Throwable th) {
@@ -327,7 +328,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }
     }
 
-    public String replaceVars(ProxiedPlayer player, ProxiedPlayer target, String format, String message){
+    public String replaceVars(ProxiedPlayer player, ProxiedPlayer target, String format, String message) {
         format = format.replace("%sender-", "%");
         replaceVars(player, format, message);
         format = format.replace("%target-", "%");
@@ -336,20 +337,20 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return format;
     }
 
-    public String replaceVars(ProxiedPlayer player, String format, String message){
+    public String replaceVars(ProxiedPlayer player, String format, String message) {
         ServerInfo serverInfo = player.getServer().getInfo();
 
         String type;
         if (localPlayers.contains(player.getName())) {
             type = config.getString("varLocalChat");
-        }else{
+        } else {
             type = config.getString("varGlobalChat");
         }
 
         String forced;
         if (player.hasPermission("bungeechatplus.forceglobalchat")) {
             forced = config.getString("varForcedGlobal");
-        }else{
+        } else {
             forced = config.getString("varNotForced");
         }
 
@@ -379,11 +380,11 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return false;
     }
 
-    public boolean checkMuted(ProxiedPlayer player){
-        if(!config.getBoolean("enableMute", true)) return false;
+    public boolean checkMuted(ProxiedPlayer player) {
+        if (!config.getBoolean("enableMute", true)) return false;
 
         String name = player.getName();
-        if(mutedPlayers.isMuted(name)){
+        if (mutedPlayers.isMuted(name)) {
             String text = config.getString("muteDenyMessage");
             text = text.replace("%reason%", wrapVariable(mutedPlayers.getReason(player.getName())));
             text = text.replace("%duration%", wrapVariable(mutedPlayers.getDuration(player.getName())));
@@ -393,10 +394,11 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return false;
     }
 
-    public boolean isUsingCaps(String text){
-        if(!config.getBoolean("antiCapsEnabled")) return false;
-        if (debug) getLogger().log(Level.INFO, text.length() + " <= " + config.getInt("antiCapsActivationLength") + " = " + (text.length() <= config.getInt("antiAntiCapsActivationLength")));
-        if(text.length() <= config.getInt("antiCapsActivationLength")) return false;
+    public boolean isUsingCaps(String text) {
+        if (!config.getBoolean("antiCapsEnabled")) return false;
+        if (debug)
+            getLogger().log(Level.INFO, text.length() + " <= " + config.getInt("antiCapsActivationLength") + " = " + (text.length() <= config.getInt("antiAntiCapsActivationLength")));
+        if (text.length() <= config.getInt("antiCapsActivationLength")) return false;
         int uppercase = 0;
         int total = 0;
         for (int x = 0; x < text.length(); x++) {
@@ -408,10 +410,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return (Math.floorDiv(uppercase * 100, total) > config.getInt("antiCapsActivationPercentage"));
     }
 
-    public String filterSwears(String text){
-        for(String blockedSwear : swearList){
+    public String filterSwears(String text) {
+        for (String blockedSwear : swearList) {
             String replaceString = "";
-            for(int x=0; x < blockedSwear.length(); x++){
+            for (int x = 0; x < blockedSwear.length(); x++) {
                 replaceString = replaceString + "*";
             }
             text = text.replace(blockedSwear, replaceString);
@@ -421,7 +423,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
     public void endConversation(ProxiedPlayer player, boolean force) {
         if (force || persistentConversations.containsKey(player.getName())) {
-            if(persistentConversations.containsKey(player.getName())) {
+            if (persistentConversations.containsKey(player.getName())) {
                 player.sendMessage(ChatParser.parse(config.getString("pnConversationEndMessage").replace("%target%", wrapVariable(persistentConversations.get(player.getName())))));
                 persistentConversations.remove(player.getName());
             } else {
@@ -467,43 +469,43 @@ public class BungeeChatPlus extends Plugin implements Listener {
         return text;
     }
 
-    public void reload(){
+    public void reload() {
         configManager.reloadConfig();
         playerListsManager.reloadConfig();
         config = configManager.getConfig();
         playerLists = playerListsManager.getConfig();
         String version = config.getString("dontTouch.version.seriouslyThisWillEraseYourConfig");
-        if(version == null || !version.equals("1.8")){
+        if (version == null || !version.equals("1.8")) {
             configManager.replaceConfig();
             config = configManager.getConfig();
         }
 
         localPlayers = playerLists.getStringList("localPlayers");
         debug = config.getBoolean("dontTouch.debug");
-        if(playerLists.get("mutedPlayers")==null) return;
-        if(playerLists.getString("mutedPlayers").equals("None")) return;
-        if(debug) getLogger().log(Level.INFO, playerLists.get("mutedPlayers").toString());
+        if (playerLists.get("mutedPlayers") == null) return;
+        if (playerLists.getString("mutedPlayers").equals("None")) return;
+        if (debug) getLogger().log(Level.INFO, playerLists.get("mutedPlayers").toString());
         Configuration playerList = playerLists.getSection("mutedPlayers");
         for (String player : playerList.getKeys()) {
             mutedPlayers.setMuted(player, playerList.getString(player + ".reason"), playerList.getString(player + ".expire"));
         }
     }
 
-    public void savePlayerLists(){
+    public void savePlayerLists() {
         playerLists.set("localPlayers", localPlayers);
         playerLists.set("mutedPlayers", null);
         ArrayList<String[]> mutedList = mutedPlayers.getMutedPlayerData();
-        if(mutedList.size() > 0) {
+        if (mutedList.size() > 0) {
             for (String[] muted : mutedList) {
                 String player = muted[0];
                 String reason = muted[1];
                 String expire = muted[2];
-                if(debug) getLogger().log(Level.INFO, "mutedPlayers." + player + ".reason = " + reason);
-                if(debug) getLogger().log(Level.INFO, "mutedPlayers." + player + ".expire = " + expire);
+                if (debug) getLogger().log(Level.INFO, "mutedPlayers." + player + ".reason = " + reason);
+                if (debug) getLogger().log(Level.INFO, "mutedPlayers." + player + ".expire = " + expire);
                 playerLists.set("mutedPlayers." + player + ".reason", reason);
                 playerLists.set("mutedPlayers." + player + ".expire", expire);
             }
-        }else{
+        } else {
             playerLists.set("mutedPlayers", "None");
         }
         playerListsManager.saveConfig(playerLists);

@@ -1,10 +1,10 @@
 package net.willsr71.bungeechatplus.commands;
 
-import net.willsr71.bungeechatplus.ChatParser;
-import net.willsr71.bungeechatplus.BungeeChatPlus;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.willsr71.bungeechatplus.BungeeChatPlus;
+import net.willsr71.bungeechatplus.ChatParser;
 
 public class CommandConversation extends Command {
     private final BungeeChatPlus plugin;

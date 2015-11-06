@@ -17,11 +17,11 @@ public class CommandListMuted extends Command {
     @Override
     public void execute(CommandSender cs, String[] args) {
         String text = "&7Muted Players:";
-        if(plugin.mutedPlayers.size() > 0){
-            for(String[] player : plugin.mutedPlayers.getMutedPlayerData()){
+        if (plugin.mutedPlayers.size() > 0) {
+            for (String[] player : plugin.mutedPlayers.getMutedPlayerData()) {
                 text = text + "\n&6Player: &7" + player[0] + ", &6Expire: &7" + player[2] + ", &6Reason: &7" + player[1];
             }
-        }else{
+        } else {
             text = text + " None";
         }
 
