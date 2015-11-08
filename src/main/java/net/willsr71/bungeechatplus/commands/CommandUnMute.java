@@ -4,7 +4,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
-import net.willsr71.bungeechatplus.ChatParser;
 
 public class CommandUnMute extends Command {
 
@@ -28,17 +27,17 @@ public class CommandUnMute extends Command {
 
         if (toMute == null) {
             String text = plugin.config.getString("unknownTarget").replace("%target%", plugin.wrapVariable(toMuteName));
-            cs.sendMessage(ChatParser.parse(text));
+            cs.sendMessage(plugin.chatParser.parse(text));
             return;
         }
 
         // add player to mute list
         //if(plugin.mutedPlayers.isMuted(toMute.getName())) {
         if (plugin.mutedPlayers.setUnMuted(toMute.getName())) {
-            cs.sendMessage(ChatParser.parse(plugin.config.getString("muteUnmuted").replace("%target%", plugin.wrapVariable(toMute.getName()))));
-            toMute.sendMessage(ChatParser.parse(plugin.config.getString("mutePardonMessage")));
+            cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("muteUnmuted").replace("%target%", plugin.wrapVariable(toMute.getName()))));
+            toMute.sendMessage(plugin.chatParser.parse(plugin.config.getString("mutePardonMessage")));
         } else {
-            cs.sendMessage(ChatParser.parse(plugin.config.getString("muteUnmuteFail").replace("%target%", plugin.wrapVariable(toMute.getName()))));
+            cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("muteUnmuteFail").replace("%target%", plugin.wrapVariable(toMute.getName()))));
         }
         plugin.savePlayerLists();
     }

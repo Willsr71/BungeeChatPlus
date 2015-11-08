@@ -4,7 +4,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
-import net.willsr71.bungeechatplus.ChatParser;
 
 public class CommandGlobalChat extends Command {
 
@@ -24,7 +23,7 @@ public class CommandGlobalChat extends Command {
 
         if (!(cs instanceof ProxiedPlayer)) {
             if (!message.trim().isEmpty()) plugin.sendGlobalConsoleChatMessage(message);
-            else cs.sendMessage(ChatParser.parse("/g <message>"));
+            else cs.sendMessage(plugin.chatParser.parse("/g <message>"));
             return;
         }
 

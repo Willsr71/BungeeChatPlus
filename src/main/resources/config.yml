@@ -27,7 +27,7 @@
 chatFormat: "&a[&9%type%%forced%&a] [&9%server%&a] [&9%prefix%&a] &9%name%&a:&r %message%"
 # If connection with the bukkitbridge fails, it will still send the message with the backup format.
 # YOU CAN ONLY USE 'ALWAYS USABLE VARIABLES' IN THIS MESSAGE
-backupChatFormat: "%&a[&cERR&a] [&9%type%%forced%&a] [&9%server%&a] &9%name%&a:&r %message%"
+backupChatFormat: "&a[&cERR&a] [&9%type%%forced%&a] [&9%server%&a] &9%name%&a:&r %message%"
 
 varGlobalChat: "Global"
 varLocalChat: "Local"

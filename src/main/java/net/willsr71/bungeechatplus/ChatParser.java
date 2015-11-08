@@ -14,14 +14,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatParser {
-    private static Pattern pattern = Pattern.compile("(?ims)(?=\\n)|(?:[&\u00A7](?<color>[0-9A-FK-OR]))|" +
+    private Pattern pattern = Pattern.compile("(?ims)(?=\\n)|(?:[&\u00A7](?<color>[0-9A-FK-OR]))|" +
             "(?:\\[(?<tag>/?(?:b|i|u|s|nocolor|nobbcode)|(?:url|command|hover|suggest|color)=(?<value>(?:(?:[^]\\[]*)\\[(?:[^]\\[]*)\\])*(?:[^]\\[]*))|/(?:url|command|hover|suggest|color))\\])|" +
             "(?:\\[(?<implicitTag>url|command|suggest)\\](?=(?<implicitValue>.*?)\\[/\\k<implicitTag>\\]))");
-
-    private static Pattern strip_bbcode_pattern = Pattern.compile("(?ims)(?:\\[(?<tag>/?(?:b|i|u|s|nocolor|nobbcode)|(?:url|command|hover|suggest|color)=(?<value>(?:(?:[^]\\[]*)\\[(?:[^]\\[]*)\\])*(?:[^]\\[]*))|/(?:url|command|hover|suggest|color))\\])|" +
+    private Pattern strip_bbcode_pattern = Pattern.compile("(?ims)(?:\\[(?<tag>/?(?:b|i|u|s|nocolor|nobbcode)|(?:url|command|hover|suggest|color)=(?<value>(?:(?:[^]\\[]*)\\[(?:[^]\\[]*)\\])*(?:[^]\\[]*))|/(?:url|command|hover|suggest|color))\\])|" +
             "(?:\\[(?<implicitTag>url|command|suggest)\\](?=(?<implicitValue>.*?)\\[/\\k<implicitTag>\\]))");
 
-    public static BaseComponent[] parse(String text) {
+    public ChatParser() {
+
+    }
+
+    public BaseComponent[] parse(String text) {
         Matcher matcher = pattern.matcher(text);
         TextComponent current = new TextComponent();
         List<BaseComponent> components = new LinkedList<>();
@@ -313,7 +316,7 @@ public class ChatParser {
         return components.toArray(new BaseComponent[components.size()]);
     }
 
-    public static String stripBBCode(String string) {
+    public String stripBBCode(String string) {
         return strip_bbcode_pattern.matcher(string).replaceAll("");
     }
 }

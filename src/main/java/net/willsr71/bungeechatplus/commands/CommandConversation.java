@@ -4,7 +4,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
-import net.willsr71.bungeechatplus.ChatParser;
 
 public class CommandConversation extends Command {
     private final BungeeChatPlus plugin;
@@ -17,7 +16,7 @@ public class CommandConversation extends Command {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (!(cs instanceof ProxiedPlayer)) {
-            cs.sendMessage(ChatParser.parse("Only players can do this"));
+            cs.sendMessage(plugin.chatParser.parse("Only players can do this"));
             return;
         }
         if (args.length < 1) {
@@ -28,7 +27,7 @@ public class CommandConversation extends Command {
         final ProxiedPlayer player = (ProxiedPlayer) cs;
         if (target == null) {
             String text = plugin.config.getString("unknownTarget").replace("%target%", plugin.wrapVariable(args[0]));
-            player.sendMessage(ChatParser.parse(text));
+            player.sendMessage(plugin.chatParser.parse(text));
             return;
         }
 

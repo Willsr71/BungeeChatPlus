@@ -4,7 +4,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
-import net.willsr71.bungeechatplus.ChatParser;
 
 public class CommandMute extends Command {
 
@@ -26,7 +25,7 @@ public class CommandMute extends Command {
     public void execute(CommandSender cs, String[] args) {
         String text;
         if (args.length < 2) {
-            cs.sendMessage(ChatParser.parse("/mute <player> <reason>"));
+            cs.sendMessage(plugin.chatParser.parse("/mute <player> <reason>"));
             return;
         }
 
@@ -40,17 +39,17 @@ public class CommandMute extends Command {
 
         if (toMute == null) {
             text = plugin.config.getString("unknownTarget").replace("%target%", plugin.wrapVariable(args[0]));
-            cs.sendMessage(ChatParser.parse(text));
+            cs.sendMessage(plugin.chatParser.parse(text));
             return;
         }
 
         // add player to mute list
         if (!plugin.mutedPlayers.isMuted(toMute.getName())) {
             plugin.mutedPlayers.setMuted(toMute.getName(), reason, duration);
-            cs.sendMessage(ChatParser.parse(replaceVars(plugin.config.getString("muteSuccess"), toMute.getName(), reason, duration)));
-            toMute.sendMessage(ChatParser.parse(replaceVars(plugin.config.getString("muteMessage"), toMute.getName(), reason, duration)));
+            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteSuccess"), toMute.getName(), reason, duration)));
+            toMute.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMessage"), toMute.getName(), reason, duration)));
         } else {
-            cs.sendMessage(ChatParser.parse(replaceVars(plugin.config.getString("muteMuteFail"), toMute.getName(), reason, duration)));
+            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMuteFail"), toMute.getName(), reason, duration)));
         }
         plugin.savePlayerLists();
     }

@@ -3,7 +3,6 @@ package net.willsr71.bungeechatplus.commands;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
-import net.willsr71.bungeechatplus.ChatParser;
 
 public class CommandToggleChat extends Command {
 
@@ -18,10 +17,10 @@ public class CommandToggleChat extends Command {
     public void execute(final CommandSender cs, final String[] args) {
         if (!plugin.localPlayers.contains(cs.getName())) {
             plugin.localPlayers.add(cs.getName());
-            cs.sendMessage(ChatParser.parse(plugin.config.getString("localChatMessage")));
+            cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("localChatMessage")));
         } else {
             plugin.localPlayers.remove(cs.getName());
-            cs.sendMessage(ChatParser.parse(plugin.config.getString("globalChatMessage")));
+            cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("globalChatMessage")));
         }
         plugin.savePlayerLists();
     }

@@ -62,9 +62,9 @@ public class BungeeChatPlusBukkit extends JavaPlugin implements Listener {
         if (text.contains("%" + prefix + "tabName%")) {
             text = text.replace("%" + prefix + "tabName%", wrapVariable(player.getPlayerListName(), allowBBCode));
         }
-        /*if (text.contains("%" + prefix + "displayName%")) {
+        if (text.contains("%" + prefix + "displayName%")) {
             text = text.replace("%" + prefix + "displayName%", wrapVariable(player.getDisplayName(), allowBBCode));
-        }*/
+        }
         if (text.contains("%" + prefix + "world%")) {
             text = text.replace("%" + prefix + "world%", wrapVariable(player.getWorld().getName(), allowBBCode));
         }
@@ -94,6 +94,7 @@ public class BungeeChatPlusBukkit extends JavaPlugin implements Listener {
                 text = text.replace("%" + prefix + "currencyPl%", wrapVariable(vaultHook.getCurrencyNamePl(), allowBBCode));
             }
         }
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream outputStream1 = new DataOutputStream(outputStream);
         try {

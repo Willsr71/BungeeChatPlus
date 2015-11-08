@@ -4,7 +4,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
-import net.willsr71.bungeechatplus.ChatParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +20,12 @@ public class CommandIgnore extends Command {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (!(cs instanceof ProxiedPlayer)) {
-            cs.sendMessage(ChatParser.parse("Only players can do this"));
+            cs.sendMessage(plugin.chatParser.parse("Only players can do this"));
             return;
         }
 
         if (args.length != 1) {
-            cs.sendMessage(ChatParser.parse("/ignore <player>"));
+            cs.sendMessage(plugin.chatParser.parse("/ignore <player>"));
         }
 
         ProxiedPlayer toIgnore = plugin.getProxy().getPlayer(args[0]);
@@ -35,7 +34,7 @@ public class CommandIgnore extends Command {
             String text = plugin.config.getString("unknownTarget").replace(
                     "%target%",
                     plugin.wrapVariable(args[0]));
-            cs.sendMessage(ChatParser.parse(text));
+            cs.sendMessage(plugin.chatParser.parse(text));
             return;
         }
 
@@ -47,13 +46,13 @@ public class CommandIgnore extends Command {
             String text = plugin.config.getString("ignoreSuccess").replace(
                     "%target%",
                     plugin.wrapVariable(args[0]));
-            cs.sendMessage(ChatParser.parse(text));
+            cs.sendMessage(plugin.chatParser.parse(text));
         } else {
             ignoreList.remove(toIgnore.getName());
             String text = plugin.config.getString("ignoreUnignore").replace(
                     "%target%",
                     plugin.wrapVariable(args[0]));
-            cs.sendMessage(ChatParser.parse(text));
+            cs.sendMessage(plugin.chatParser.parse(text));
         }
         plugin.ignoredPlayers.put(cs.getName(), ignoreList);
     }

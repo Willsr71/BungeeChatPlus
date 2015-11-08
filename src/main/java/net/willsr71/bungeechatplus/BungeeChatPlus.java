@@ -40,6 +40,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public Configuration config;
     public Configuration playerLists;
     public BukkitBridge bukkitBridge;
+    public ChatParser chatParser = new ChatParser();
 
     @Override
     public void onEnable() {
@@ -171,7 +172,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
                 event.setCancelled(true);
                 return;
             } else {
-                player.sendMessage(ChatParser.parse(config.getString("unknownTarget").replace(
+                player.sendMessage(chatParser.parse(config.getString("unknownTarget").replace(
                         "%target%", wrapVariable(persistentConversations.get(player.getName())))));
                 endConversation(player, true);
             }
@@ -243,14 +244,14 @@ public class BungeeChatPlus extends Plugin implements Listener {
             try {
                 text = bukkitBridge.replaceVariables(player, text, "");
             } catch (Exception e) {
-                player.sendMessage(ChatParser.parse(config.getString("replaceVarError")));
+                player.sendMessage(chatParser.parse(config.getString("replaceVarError")));
                 getLogger().log(Level.WARNING, "Failed to parse bukkit variables. Is BungeeChatPlus installed?", e);
                 text = config.getString("backupChatFormat");
                 text = replaceVars(player, text, message);
             }
 
             // broadcast message
-            BaseComponent[] msg = ChatParser.parse(text);
+            BaseComponent[] msg = chatParser.parse(text);
             for (ProxiedPlayer target : getProxy().getPlayers()) {
                 if (ignoredPlayers.get(target.getName()) != null && ignoredPlayers.get(target.getName()).contains(player.getName()))
                     continue;
@@ -267,10 +268,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
             }
             BCPLogger.logChat(player, message);
 
-            if (isCapsing) player.sendMessage(ChatParser.parse(config.getString("antiCapsMessage")));
+            if (isCapsing) player.sendMessage(chatParser.parse(config.getString("antiCapsMessage")));
         } catch (Throwable th) {
             try {
-                player.sendMessage(ChatParser.parse(config.getString("internalError")));
+                player.sendMessage(chatParser.parse(config.getString("internalError")));
             } catch (Exception e) {
                 e.printStackTrace();
                 // maybe the player is offline?
@@ -290,7 +291,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             text = text.replaceAll("%(group|prefix|suffix|balance|currency|currencyPl|tabName|displayName|world|health|level)%", "");
 
             // broadcast message
-            BaseComponent[] msg = ChatParser.parse(text);
+            BaseComponent[] msg = chatParser.parse(text);
             for (ProxiedPlayer target : getProxy().getPlayers()) {
                 Server server = target.getServer();
                 if (server == null || !excludedServers.contains(server.getInfo().getName())) {
@@ -311,15 +312,15 @@ public class BungeeChatPlus extends Plugin implements Listener {
         if (ignoredPlayers.get(target.getName()) != null && ignoredPlayers.get(target.getName()).contains(player.getName())) {
             text = config.getString("ignored").replace(
                     "%target%", wrapVariable(target.getName()));
-            player.sendMessage(ChatParser.parse(text));
+            player.sendMessage(chatParser.parse(text));
             return;
         }
 
         text = preparePlayerChat(text, player);
         text = replaceRegex(text);
 
-        player.sendMessage(ChatParser.parse(replaceVars(player, target, config.getString("pmSend"), text)));
-        target.sendMessage(ChatParser.parse(replaceVars(player, target, config.getString("pmReceive"), text)));
+        player.sendMessage(chatParser.parse(replaceVars(player, target, config.getString("pmSend"), text)));
+        target.sendMessage(chatParser.parse(replaceVars(player, target, config.getString("pmReceive"), text)));
 
         replyTarget.put(target.getName(), player.getName());
 
@@ -329,10 +330,8 @@ public class BungeeChatPlus extends Plugin implements Listener {
     }
 
     public String replaceVars(ProxiedPlayer player, ProxiedPlayer target, String format, String message) {
-        format = format.replace("%sender-", "%");
-        replaceVars(player, format, message);
-        format = format.replace("%target-", "%");
-        replaceVars(player, format, message);
+        format = format.replace("%sender-name%", wrapVariable(player.getDisplayName()));
+        format = format.replace("%target-name%", wrapVariable(target.getDisplayName()));
         format = format.replace("%message%", message);
         return format;
     }
@@ -354,9 +353,9 @@ public class BungeeChatPlus extends Plugin implements Listener {
             forced = config.getString("varNotForced");
         }
 
+        format = format.replace("%message%", message);
         format = format.replace("%player%", wrapVariable(player.getDisplayName()));
         format = format.replace("%name%", wrapVariable(player.getDisplayName()));
-        format = format.replace("%message%", wrapVariable(message));
         format = format.replace("%server%", wrapVariable(serverInfo.getName()));
         format = format.replace("%server-players%", wrapVariable(serverInfo.getPlayers().size() + ""));
         format = format.replace("%server-motd%", wrapVariable(serverInfo.getMotd()));
@@ -374,7 +373,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         }
         AntiSpamData antiSpamData = spamDataMap.get(name);
         if (antiSpamData.isSpamming()) {
-            player.sendMessage(ChatParser.parse(config.getString("antiSpamDenyMessage")));
+            player.sendMessage(chatParser.parse(config.getString("antiSpamDenyMessage")));
             return true;
         }
         return false;
@@ -388,7 +387,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             String text = config.getString("muteDenyMessage");
             text = text.replace("%reason%", wrapVariable(mutedPlayers.getReason(player.getName())));
             text = text.replace("%duration%", wrapVariable(mutedPlayers.getDuration(player.getName())));
-            player.sendMessage(ChatParser.parse(text));
+            player.sendMessage(chatParser.parse(text));
             return true;
         }
         return false;
@@ -424,10 +423,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void endConversation(ProxiedPlayer player, boolean force) {
         if (force || persistentConversations.containsKey(player.getName())) {
             if (persistentConversations.containsKey(player.getName())) {
-                player.sendMessage(ChatParser.parse(config.getString("pnConversationEndMessage").replace("%target%", wrapVariable(persistentConversations.get(player.getName())))));
+                player.sendMessage(chatParser.parse(config.getString("pnConversationEndMessage").replace("%target%", wrapVariable(persistentConversations.get(player.getName())))));
                 persistentConversations.remove(player.getName());
             } else {
-                player.sendMessage(ChatParser.parse(config.getString("endConversationEndMessage").replace("%target%", "nobody")));
+                player.sendMessage(chatParser.parse(config.getString("endConversationEndMessage").replace("%target%", "nobody")));
             }
         }
     }
@@ -464,7 +463,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             text = ChatColor.stripColor(text);
         }
         if (!player.hasPermission("bungeechatplus.chat.bbcode")) {
-            text = ChatParser.stripBBCode(text);
+            text = chatParser.stripBBCode(text);
         }
         return text;
     }
@@ -533,6 +532,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
     public void startConversation(ProxiedPlayer player, ProxiedPlayer target) {
         persistentConversations.put(player.getName(), target.getName());
-        player.sendMessage(ChatParser.parse(config.getString("pmConversationStartMessage").replace("%target%", wrapVariable(target.getName()))));
+        player.sendMessage(chatParser.parse(config.getString("pmConversationStartMessage").replace("%target%", wrapVariable(target.getName()))));
     }
 }

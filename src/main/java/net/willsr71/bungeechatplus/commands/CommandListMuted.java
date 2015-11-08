@@ -3,7 +3,6 @@ package net.willsr71.bungeechatplus.commands;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
-import net.willsr71.bungeechatplus.ChatParser;
 
 public class CommandListMuted extends Command {
 
@@ -25,6 +24,6 @@ public class CommandListMuted extends Command {
             text = text + " None";
         }
 
-        cs.sendMessage(ChatParser.parse(text));
+        cs.sendMessage(plugin.chatParser.parse(text));
     }
 }
