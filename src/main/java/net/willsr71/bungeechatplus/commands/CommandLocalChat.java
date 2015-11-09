@@ -30,8 +30,8 @@ public class CommandLocalChat extends Command {
             plugin.endConversation((ProxiedPlayer) cs, false);
             return;
         }
-
-        final String finalMessage = message;
+        
+        final String finalMessage = message.trim();
         plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {

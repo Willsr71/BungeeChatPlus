@@ -7,7 +7,7 @@ website: http://willsr71.net/
 commands:
   bcp:
     description: Core command for BungeeChatPlus
-    usage: /bcp <command> <args>
+    usage: /bcp <args>
     aliases: [bcp, bungeechatplus]
   reload:
     description: Reload BungeeChatPlus configs

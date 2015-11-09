@@ -1,38 +1,83 @@
 package net.willsr71.bungeechatplus.commands;
 
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
 
-public class CommandBase extends Command {
-    private final BungeeChatPlus plugin;
+import java.util.Arrays;
+import java.util.List;
 
-    public CommandBase(BungeeChatPlus plugin, String name, String permission, String... aliases) {
-        super(name, permission, aliases);
+public class CommandBase{
+    private BungeeChatPlus plugin;
+
+    public CommandBungeeChatPlus commandBungeeChatPlus;
+    public CommandConversation commandConversation;
+    public CommandGlobalChat commandGlobalChat;
+    public CommandIgnore commandIgnore;
+    public CommandListMuted commandListMuted;
+    public CommandLocalChat commandLocalChat;
+    public CommandMessage commandMessage;
+    public CommandMute commandMute;
+    public CommandReload commandReload;
+    public CommandReply commandReply;
+    public CommandToggleChat commandToggleChat;
+    public CommandUnMute commandUnMute;
+
+    public boolean commandsLoaded = false;
+
+    public CommandBase(BungeeChatPlus plugin) {
         this.plugin = plugin;
     }
+    
+    public void initializeCommands() {
+        List<String> aliases;
 
-    @Override
-    public void execute(CommandSender cs, String[] args) {
-        if (args.length == 0) {
-            cs.sendMessage(plugin.chatParser.parse("&7You must specify a command to execute"));
-            return;
-        }
+        aliases = plugin.config.getStringList("bcpCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("bcp", "bungeechatplus");
+        commandBungeeChatPlus = new CommandBungeeChatPlus(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
 
-        if (plugin.debug) cs.sendMessage(plugin.chatParser.parse("GetProxy: " + plugin.getProxy().getPlayers().size()));
-        if (plugin.debug)
-            cs.sendMessage(plugin.chatParser.parse("ProxiedServer: " + ProxyServer.getInstance().getPlayers().size()));
+        aliases = plugin.config.getStringList("reloadCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("bcpreload", "bungeechatplusreload");
+        commandReload = new CommandReload(plugin, aliases.get(0), "bungeechatplus.reload", aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
 
-        if (args[0].equals("reload")) {
-            args[0] = "bcpreload";
-        }
+        aliases = plugin.config.getStringList("toggleChatCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("togglechat", "chattoggle");
+        commandToggleChat = new CommandToggleChat(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
 
-        String command = "";
-        for (String arg : args) {
-            command = (command + " " + arg).trim();
-        }
+        aliases = plugin.config.getStringList("globalChatCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("global", "g");
+        commandGlobalChat = new CommandGlobalChat(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
 
-        plugin.getProxy().getPluginManager().dispatchCommand(cs, command);
+        aliases = plugin.config.getStringList("localChatCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("local", "l");
+        commandLocalChat = new CommandLocalChat(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+
+        aliases = plugin.config.getStringList("pmCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("w", "msg", "message", "tell", "whisper", "pm");
+        commandMessage = new CommandMessage(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+
+        aliases = plugin.config.getStringList("pmReplyCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("reply", "r");
+        commandReply = new CommandReply(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+
+        aliases = plugin.config.getStringList("pmConversationCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("chat", "conversation");
+        commandConversation = new CommandConversation(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+
+        aliases = plugin.config.getStringList("muteCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("mute", "bungeemute");
+        commandMute = new CommandMute(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+
+        aliases = plugin.config.getStringList("muteUnmuteCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("unmute", "bungeeunmute");
+        commandUnMute = new CommandUnMute(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+
+        aliases = plugin.config.getStringList("muteListCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("mutelist", "bungeemutelist", "listmuted", "bungeelistmuted");
+        commandListMuted = new CommandListMuted(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+
+        aliases = plugin.config.getStringList("ignoreCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("ignore", "ignoreplayer");
+        commandIgnore = new CommandIgnore(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+
+        commandsLoaded = true;
     }
 }

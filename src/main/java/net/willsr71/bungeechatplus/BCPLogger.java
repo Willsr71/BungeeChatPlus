@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class BCPLogger {
-    private static SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+    private static SimpleDateFormat format = new SimpleDateFormat("dd.MM HH:mm:ss");
 
     public static void logChat(ProxiedPlayer player, String message) {
         if (!BungeeChatPlus.instance.config.getBoolean("logChat")) return;
