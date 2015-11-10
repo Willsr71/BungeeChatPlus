@@ -86,9 +86,19 @@ muteListCommandAliases: ['mutelist', 'bungeemutelist', 'listmuted', 'bungeelistm
 ###################################
 ignoreEnabled: true
 ignored: "&c%target% has ignored you"
-ignoreSuccess: "&7You ignored %target%"
-ignoreUnignore: "&7You no longer ignore %target%"
+ignoreSuccess: "&7You are now ignoring %target%"
+ignoreUnignore: "&7You are no longer ignoring %target%"
 ignoreCommandAliases: ['ignore', 'ignoreplayer']
+
+###################################
+#####     Player Filtering    #####
+###################################
+filterEnabled: false
+filterAdd: "&7%filter% has been added to your filters"
+filterRemove: "&7%filter% has been removed from your filters"
+filterNoArgs: "&cYou must specify a string to filter"
+filterAlreadyFiltered: "&c%filter% is already filtered"
+ignoreCommandAliases: ['filter', 'filterchat']
 
 ###################################
 #####        Anti-Spam        #####

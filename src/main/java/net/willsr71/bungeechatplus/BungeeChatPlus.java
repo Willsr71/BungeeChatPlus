@@ -16,10 +16,13 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.willsr71.bungeechatplus.bukkit.Constants;
-import net.willsr71.bungeechatplus.commands.*;
+import net.willsr71.bungeechatplus.commands.CommandBase;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +33,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public final Map<String, String> persistentConversations = new HashMap<>();
     public final Map<String, List<String>> ignoredPlayers = new HashMap<>();
     public final Map<String, AntiSpamData> spamDataMap = new HashMap<>();
+    public Map<String, FilterData> filterDataMap = new HashMap<>();
     public List<String> localPlayers = new ArrayList<>();
     public MuteData mutedPlayers = new MuteData();
     public List<String> excludedServers = new ArrayList<>();
@@ -97,7 +101,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
         if (!commandBase.commandsLoaded) {
             getLogger().info("Initializing commands...");
-            commandBase.initializeCommands();
+            commandBase.reloadCommands();
         }
 
         getLogger().info("Unregistering commands...");
@@ -133,6 +137,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
         if (config.getBoolean("ignoreEnabled", true)) {
             getProxy().getPluginManager().registerCommand(instance, commandBase.commandIgnore);
+        }
+
+        if (config.getBoolean("filterEnabled", true)) {
+            getProxy().getPluginManager().registerCommand(instance, commandBase.commandFilter);
         }
 
         getLogger().info("Reloaded");
@@ -245,10 +253,25 @@ public class BungeeChatPlus extends Plugin implements Listener {
             // broadcast message
             BaseComponent[] msg = chatParser.parse(text);
             for (ProxiedPlayer target : getProxy().getPlayers()) {
-                if (ignoredPlayers.get(target.getName()) != null && ignoredPlayers.get(target.getName()).contains(player.getName()))
+                if (ignoredPlayers.get(target.getName()) != null && ignoredPlayers.get(target.getName()).contains(player.getName())) {
                     continue;
+                }
+
                 Server server = target.getServer();
-                if (server == null || !excludedServers.contains(server.getInfo().getName())) {
+
+                if (server == null || excludedServers.contains(server.getInfo().getName())) {
+                    continue;
+                }
+
+                if (localPlayers.contains(target.getName())) {
+                    if (player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()) || player.hasPermission("bungeechatplus.forceglobalchat")) {
+                        target.sendMessage(msg);
+                    }
+                } else {
+                    target.sendMessage(msg);
+                }
+
+                /*if (server == null || !excludedServers.contains(server.getInfo().getName())) {
                     if (localPlayers.contains(target.getName())) {
                         if (player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()) || player.hasPermission("bungeechatplus.forceglobalchat")) {
                             target.sendMessage(msg);
@@ -256,7 +279,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
                     } else {
                         target.sendMessage(msg);
                     }
-                }
+                }*/
             }
             BCPLogger.logChat(player, message);
 
