@@ -93,12 +93,16 @@ ignoreCommandAliases: ['ignore', 'ignoreplayer']
 ###################################
 #####     Player Filtering    #####
 ###################################
-filterEnabled: false
-filterAdd: "&7%filter% has been added to your filters"
-filterRemove: "&7%filter% has been removed from your filters"
-filterNoArgs: "&cYou must specify a string to filter"
-filterAlreadyFiltered: "&c%filter% is already filtered"
+filterEnabled: true
+filterAdd: "&6%filter% &7has been added to your filters"
+filterRemove: "&6%filter% &7has been removed from your filters"
+filterAlreadyFiltered: "&6%filter% &cis already filtered"
+filterNotFiltered: "&6%filter% &cis not on your filter list"
+filterNoFilters: "&cYou do not have any filters"
 filterCommandAliases: ['filter', 'filterchat']
+filterListCommandAliases: ['filterlist', 'filterchatlist']
+# A list of things that players cannot filter (filters matching these will be able to be added, but they will have no effect)
+filterBlacklist: ['Forced']
 
 ###################################
 #####        Anti-Spam        #####

@@ -230,16 +230,6 @@ public class BungeeChatPlus extends Plugin implements Listener {
                 } else {
                     target.sendMessage(msg);
                 }
-
-                /*if (server == null || !excludedServers.contains(server.getInfo().getName())) {
-                    if (localPlayers.contains(target.getName())) {
-                        if (player.getServer().getInfo().getName().equals(target.getServer().getInfo().getName()) || player.hasPermission("bungeechatplus.forceglobalchat")) {
-                            target.sendMessage(msg);
-                        }
-                    } else {
-                        target.sendMessage(msg);
-                    }
-                }*/
             }
             BCPLogger.logChat(player, message);
 

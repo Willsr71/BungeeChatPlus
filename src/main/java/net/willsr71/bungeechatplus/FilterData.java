@@ -14,7 +14,16 @@ public class FilterData {
 
     public boolean isFiltered(String string) {
         for (String filter : filters) {
-            if (string.indexOf(filter) != 0) {
+            if (string.contains(filter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean filterExists(String string) {
+        for (String filter : filters) {
+            if (string.equals(filter)) {
                 return true;
             }
         }
@@ -29,6 +38,10 @@ public class FilterData {
 
     public void addFilter(String filter) {
         filters.add(filter);
+    }
+
+    public void removeFilter(String filter) {
+        filters.remove(filter);
     }
 
     public ArrayList<String> getFilters() {

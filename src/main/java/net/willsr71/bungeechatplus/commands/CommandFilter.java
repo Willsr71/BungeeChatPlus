@@ -18,26 +18,52 @@ public class CommandFilter extends Command {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        String player = cs.getName();
+
         if (!plugin.config.getBoolean("filterEnabled")) {
             plugin.sendCommandDisabled(cs.getName(), "filter");
             return;
         }
 
-        if (args.length == 0) {
-            cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("filterNoArgs")));
+        if (args.length == 1 && args[0].equals("list")) {
+            plugin.commandBase.commandFilterList.execute(cs, args);
             return;
         }
 
-        if (plugin.filterDataMap.get(cs.getName()).isFiltered(args[0])) {
-            cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("filterAlreadyFiltered").replace("%filter%", args[0])));
+        if (args.length != 2 || !(args[0].equals("add") || args[0].equals("remove"))) {
+            cs.sendMessage(plugin.chatParser.parse("/filter <add|remove|list> <string>"));
             return;
         }
 
-        List<String> filters = new ArrayList<>();
-        filters.add(args[0]);
+        if (args[0].equals("add")) {
+            if (plugin.filterDataMap.get(player) == null) {
+                List<String> filters = new ArrayList<>();
+                filters.add(args[1]);
 
-        plugin.filterDataMap.put(cs.getName(), new FilterData(cs.getName(), filters));
+                plugin.filterDataMap.put(player, new FilterData(player, filters));
+            } else {
+                if (plugin.filterDataMap.get(player).filterExists(args[1])) {
+                    cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("filterAlreadyFiltered").replace("%filter%", args[1])));
+                    return;
+                }
 
-        cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("filterAdd").replace("%filter%", args[0])));
+                plugin.filterDataMap.get(player).addFilter(args[1]);
+            }
+
+            cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("filterAdd").replace("%filter%", args[1])));
+        } else if (args[0].equals("remove")) {
+            if (plugin.filterDataMap.get(player) == null || !plugin.filterDataMap.get(player).isFiltered(args[1])) {
+                cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("filterNotFiltered").replace("%filter%", args[1])));
+                return;
+            }
+
+            plugin.filterDataMap.get(player).removeFilter(args[1]);
+
+            if (plugin.filterDataMap.get(player).getFilters().size() == 0) {
+                plugin.filterDataMap.remove(player);
+            }
+
+            cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("filterRemove").replace("%filter%", args[1])));
+        }
     }
 }

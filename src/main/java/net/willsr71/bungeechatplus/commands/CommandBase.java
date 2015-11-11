@@ -9,6 +9,7 @@ public class CommandBase {
     public CommandBungeeChatPlus commandBungeeChatPlus;
     public CommandConversation commandConversation;
     public CommandFilter commandFilter;
+    public CommandFilterList commandFilterList;
     public CommandGlobalChat commandGlobalChat;
     public CommandIgnore commandIgnore;
     public CommandListMuted commandListMuted;
@@ -105,6 +106,11 @@ public class CommandBase {
         if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("filter", "filterchat");
         commandFilter = new CommandFilter(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
         plugin.getProxy().getPluginManager().registerCommand(plugin, commandFilter);
+
+        aliases = plugin.config.getStringList("filterListCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("filterlist", "filterchatlist");
+        commandFilterList = new CommandFilterList(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+        plugin.getProxy().getPluginManager().registerCommand(plugin, commandFilterList);
 
         aliases = plugin.config.getStringList("globalChatCommandAliases");
         if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("global", "g");
