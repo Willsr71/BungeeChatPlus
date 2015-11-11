@@ -16,6 +16,11 @@ public class CommandUnMute extends Command {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (!plugin.config.getBoolean("muteEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "mute");
+            return;
+        }
+
         String toMuteName;
         if (args.length != 1) {
             toMuteName = cs.getName();

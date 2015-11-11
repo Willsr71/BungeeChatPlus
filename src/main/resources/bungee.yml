@@ -9,46 +9,6 @@ commands:
     description: Core command for BungeeChatPlus
     usage: /bcp <command> <args>
     aliases: [bcp, bungeechatplus]
-  reload:
-    description: Reload BungeeChatPlus configs
-    usage: /bcpreload
-    aliases: [bcpreload, bungeechatplusreload]
-  togglechat:
-    description: Toggle global/local chat
-    usage: /togglechat <player>
-    aliases: [togglechat, chattoggle]
-  globalchat:
-    description: Send global chat message
-    usage: /global <message>
-    aliases: [global, g]
-  localchat:
-    description: Send local chat message
-    usage: /local <message>
-    aliases: [local, l]
-  pm:
-    description: Send a private message
-    usage: /msg <player> <message>
-    aliases: [w, msg, message, tell, whisper]
-  reply:
-    description: Reply to a private message
-    usage: /r <message>
-    aliases: [r, reply]
-  mute:
-    description: Mute a player
-    usage: /mute <player> <reason>
-    aliases: [mute, bungeemute]
-  unmute:
-    description: Unmute a player
-    usage: /unmute <player>
-    aliases: [unmute, bungeeunmute]
-  mutelist:
-    description: List muted players
-    usage: /mutelist [player]
-    aliases: [mutelist, bungeemutelist, listmuted, bungeelistmuted]
-  ignore:
-    description: Ignore a player
-    usage: /ignore <player>
-    aliases: [ignore, ignoreplayer]
 permissions:
   bungeechatplus.reload:
     desfault: op

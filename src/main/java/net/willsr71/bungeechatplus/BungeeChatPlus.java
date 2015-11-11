@@ -99,49 +99,9 @@ public class BungeeChatPlus extends Plugin implements Listener {
             }
         }
 
-        if (!commandBase.commandsLoaded) {
-            getLogger().info("Initializing commands...");
-            commandBase.reloadCommands();
-        }
+        commandBase.reloadCommands();
 
-        getLogger().info("Unregistering commands...");
-        getProxy().getPluginManager().unregisterCommands(instance);
-
-        getLogger().info("Registering commands...");
-        getProxy().getPluginManager().registerCommand(instance, commandBase.commandBungeeChatPlus);
-        getProxy().getPluginManager().registerCommand(instance, commandBase.commandReload);
-
-        if (config.getBoolean("toggleChatCommandEnabled", true)) {
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandToggleChat);
-        }
-
-        if (config.getBoolean("globalChatCommandEnabled", true)) {
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandGlobalChat);
-        }
-
-        if (config.getBoolean("localChatCommandEnabled", true)) {
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandLocalChat);
-        }
-
-        if (config.getBoolean("pmEnabled", true)) {
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandMessage);
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandReply);
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandConversation);
-        }
-
-        if (config.getBoolean("muteEnabled", true)) {
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandMute);
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandUnMute);
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandListMuted);
-        }
-
-        if (config.getBoolean("ignoreEnabled", true)) {
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandIgnore);
-        }
-
-        if (config.getBoolean("filterEnabled", true)) {
-            getProxy().getPluginManager().registerCommand(instance, commandBase.commandFilter);
-        }
+        savePlayerLists();
 
         getLogger().info("Reloaded");
     }
@@ -438,10 +398,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void endConversation(ProxiedPlayer player, boolean force) {
         if (force || persistentConversations.containsKey(player.getName())) {
             if (persistentConversations.containsKey(player.getName())) {
-                player.sendMessage(chatParser.parse(config.getString("pnConversationEndMessage").replace("%target%", wrapVariable(persistentConversations.get(player.getName())))));
+                player.sendMessage(chatParser.parse(config.getString("pmConversationEndMessage").replace("%target%", wrapVariable(persistentConversations.get(player.getName())))));
                 persistentConversations.remove(player.getName());
             } else {
-                player.sendMessage(chatParser.parse(config.getString("endConversationEndMessage").replace("%target%", "nobody")));
+                player.sendMessage(chatParser.parse(config.getString("pmConversationEndMessage").replace("%target%", "nobody")));
             }
         }
     }
@@ -526,5 +486,9 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void startConversation(ProxiedPlayer player, ProxiedPlayer target) {
         persistentConversations.put(player.getName(), target.getName());
         player.sendMessage(chatParser.parse(config.getString("pmConversationStartMessage").replace("%target%", wrapVariable(target.getName()))));
+    }
+
+    public void sendCommandDisabled(String player, String command) {
+        getProxy().getPlayer(player).sendMessage(chatParser.parse(config.getString("commandDisabled").replace("%command%", command)));
     }
 }

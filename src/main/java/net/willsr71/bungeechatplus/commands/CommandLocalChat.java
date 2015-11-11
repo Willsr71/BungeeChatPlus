@@ -16,6 +16,11 @@ public class CommandLocalChat extends Command {
 
     @Override
     public void execute(final CommandSender cs, final String[] args) {
+        if (!plugin.config.getBoolean("localChatCommandEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "localchat");
+            return;
+        }
+
         if (!(cs instanceof ProxiedPlayer)) {
             cs.sendMessage(plugin.chatParser.parse("Player only command"));
             return;

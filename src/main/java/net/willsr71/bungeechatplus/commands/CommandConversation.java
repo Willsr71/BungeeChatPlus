@@ -15,6 +15,11 @@ public class CommandConversation extends Command {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (!plugin.config.getBoolean("pmEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "conversation");
+            return;
+        }
+
         if (!(cs instanceof ProxiedPlayer)) {
             cs.sendMessage(plugin.chatParser.parse("Only players can do this"));
             return;

@@ -15,6 +15,11 @@ public class CommandListMuted extends Command {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (!plugin.config.getBoolean("muteEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "mute");
+            return;
+        }
+
         String text = "&7Muted Players:";
         if (plugin.mutedPlayers.size() > 0) {
             for (String[] player : plugin.mutedPlayers.getMutedPlayerData()) {

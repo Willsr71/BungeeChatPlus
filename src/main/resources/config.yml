@@ -35,7 +35,7 @@ varForcedGlobal: "-Forced"
 varNotForced: ""
 localChatMessage: "&7You are now listening to local chat."
 globalChatMessage: "&7You are now listening to global chat."
-toggleChatCommandEnabled: true
+toggleChatEnabled: true
 toggleChatCommandAliases: ['togglechat', 'chattoggle']
 globalChatCommandEnabled: false
 globalChatCommandAliases: ['global', 'g']
@@ -98,7 +98,7 @@ filterAdd: "&7%filter% has been added to your filters"
 filterRemove: "&7%filter% has been removed from your filters"
 filterNoArgs: "&cYou must specify a string to filter"
 filterAlreadyFiltered: "&c%filter% is already filtered"
-ignoreCommandAliases: ['filter', 'filterchat']
+filterCommandAliases: ['filter', 'filterchat']
 
 ###################################
 #####        Anti-Spam        #####
@@ -128,6 +128,7 @@ consoleName: "&4CONSOLE"
 bcpCommandAliases: ['bcp', 'bungeechatplus']
 reloadCommandAliases: ['bcpreload', 'bungeechatplusreload']
 unknownTarget: "&7%target% is not on the server"
+commandDisabled: "&cThe command &6%command% &cis disabled"
 replaceVarError: "&cError replacing variables. Sending as is. Have you installed BungeeChatPlus on this server?"
 internalError: "&cAn internal error occurred while processing your chat message."
 alwaysGlobalChat: true

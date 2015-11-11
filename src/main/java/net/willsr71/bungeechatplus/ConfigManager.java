@@ -51,6 +51,7 @@ public class ConfigManager {
     public void replaceConfig() {
         deleteConfig();
         createConfig();
+        reloadConfig();
     }
 
     private void createConfig() {

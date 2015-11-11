@@ -3,7 +3,7 @@ package net.willsr71.bungeechatplus;
 import java.util.ArrayList;
 
 public class MuteData {
-    ArrayList<String[]> mutedPlayers = new ArrayList<>();
+    private ArrayList<String[]> mutedPlayers = new ArrayList<>();
 
     public void setMuted(String player, String reason, String expire) {
         mutedPlayers.add(new String[]{player, reason, expire});
@@ -19,12 +19,7 @@ public class MuteData {
         return false;
     }
 
-    public void checkMuted() {
-
-    }
-
     public boolean isMuted(String player) {
-        checkMuted();
         boolean isMuted = false;
         for (String[] muted : mutedPlayers) {
             if (muted[0].equals(player)) {

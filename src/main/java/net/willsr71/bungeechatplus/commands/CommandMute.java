@@ -23,6 +23,11 @@ public class CommandMute extends Command {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (!plugin.config.getBoolean("muteEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "mute");
+            return;
+        }
+
         String text;
         if (args.length < 2) {
             cs.sendMessage(plugin.chatParser.parse("/mute <player> <reason>"));

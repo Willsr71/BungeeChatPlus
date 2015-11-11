@@ -16,6 +16,11 @@ public class CommandGlobalChat extends Command {
 
     @Override
     public void execute(final CommandSender cs, final String[] args) {
+        if (!plugin.config.getBoolean("globalChatCommandEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "globalchat");
+            return;
+        }
+
         String message = "";
         for (String arg : args) {
             message = message + arg + " ";

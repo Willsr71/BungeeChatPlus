@@ -18,6 +18,11 @@ public class CommandFilter extends Command {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (!plugin.config.getBoolean("filterEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "filter");
+            return;
+        }
+
         if (args.length == 0) {
             cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("filterNoArgs")));
             return;

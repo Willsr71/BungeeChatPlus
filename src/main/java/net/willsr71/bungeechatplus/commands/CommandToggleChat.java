@@ -15,6 +15,11 @@ public class CommandToggleChat extends Command {
 
     @Override
     public void execute(final CommandSender cs, final String[] args) {
+        if (!plugin.config.getBoolean("toggleChatEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "togglechat");
+            return;
+        }
+
         if (!plugin.localPlayers.contains(cs.getName())) {
             plugin.localPlayers.add(cs.getName());
             cs.sendMessage(plugin.chatParser.parse(plugin.config.getString("localChatMessage")));

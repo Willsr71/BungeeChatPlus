@@ -19,13 +19,19 @@ public class CommandIgnore extends Command {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (!plugin.config.getBoolean("ignoreEnabled")) {
+            plugin.sendCommandDisabled(cs.getName(), "ignore");
+            return;
+        }
+
         if (!(cs instanceof ProxiedPlayer)) {
             cs.sendMessage(plugin.chatParser.parse("Only players can do this"));
             return;
         }
 
-        if (args.length != 1) {
+        if (args.length == 0) {
             cs.sendMessage(plugin.chatParser.parse("/ignore <player>"));
+            return;
         }
 
         ProxiedPlayer toIgnore = plugin.getProxy().getPlayer(args[0]);
