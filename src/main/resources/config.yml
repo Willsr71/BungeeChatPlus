@@ -75,7 +75,7 @@ mutePardonMessage: "&cYou have been unmuted"
 muteDenyMessage: "&cYou are muted for %reason% until %duration%. for further assistance pm a Moderator."
 muteSuccess: "&7%target% has been muted for %reason% until %duration%"
 muteUnmuted: "&7%target% has been unmuted"
-muteMuteFail: "&7%target% is already muted for %reason% until %duration%"
+muteAlreadyMuted: "&7%target% is already muted for %reason% until %duration%"
 muteUnmuteFail: "&7%target% is not muted"
 muteCommandAliases: ['mute', 'bungeemute']
 muteUnmuteCommandAliases: ['unmute', 'bungeeunmute']
