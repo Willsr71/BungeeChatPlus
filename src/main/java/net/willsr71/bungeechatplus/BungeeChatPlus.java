@@ -35,7 +35,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public final Map<String, AntiSpamData> spamDataMap = new HashMap<>();
     public Map<String, FilterData> filterDataMap = new HashMap<>();
     public List<String> localPlayers = new ArrayList<>();
-    public MuteData mutedPlayers = new MuteData();
+    public MuteData mutedPlayers;
     public List<String> excludedServers = new ArrayList<>();
     public List<String> swearList = new ArrayList<>();
     public ChatParser chatParser = new ChatParser();
@@ -59,6 +59,8 @@ public class BungeeChatPlus extends Plugin implements Listener {
         getProxy().registerChannel(Constants.channel);
         bukkitBridge = new BukkitBridge(this);
         bukkitBridge.enable();
+
+        mutedPlayers = new MuteData(this);
 
         commandBase = new CommandBase(this);
 

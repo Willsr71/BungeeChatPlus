@@ -10,8 +10,16 @@
 
     <repositories>
         <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>md5-repo</id>
+            <url>http://repo.md-5.net/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
             <id>willsr71-repo</id>
-            <url>https://repo.willsr71.net/content/groups/public</url>
+            <url>http://repo.willsr71.net/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -21,21 +29,18 @@
             <artifactId>spigot-api</artifactId>
             <version>1.7.9-R0.3-SNAPSHOT</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.7.9-R0.2</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.8-SNAPSHOT</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
