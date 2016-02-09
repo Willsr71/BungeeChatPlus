@@ -33,7 +33,6 @@ public class VaultHook {
             return false;
         }
         chat = chatProvider.getProvider();
-        plugin.getLogger().log(Level.INFO, "Chat hook: " + chatProvider.getProvider().getName());
         return true;
     }
 
@@ -44,7 +43,6 @@ public class VaultHook {
             return false;
         }
         permission = permissionProvider.getProvider();
-        plugin.getLogger().log(Level.INFO, "Permissions hook: " + permissionProvider.getProvider().getName());
         return true;
     }
 
@@ -55,7 +53,6 @@ public class VaultHook {
             return false;
         }
         economy = economyProvider.getProvider();
-        plugin.getLogger().log(Level.INFO, "Economy hook: " + economyProvider.getProvider().getName());
         return true;
     }
 
