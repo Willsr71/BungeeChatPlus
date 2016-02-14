@@ -277,8 +277,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         if (checkSpam(player)) return;
         // check ignored
         if (ignoredPlayers.get(target.getName()) != null && ignoredPlayers.get(target.getName()).contains(player.getName())) {
-            text = config.getString("ignored").replace(
-                    "%target%", wrapVariable(target.getName()));
+            text = config.getString("ignored").replace("%target%", wrapVariable(target.getName()));
             player.sendMessage(chatParser.parse(text));
             return;
         }
@@ -299,6 +298,8 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public String replaceVars(ProxiedPlayer player, ProxiedPlayer target, String format, String message) {
         format = format.replace("%sender-name%", wrapVariable(player.getDisplayName()));
         format = format.replace("%target-name%", wrapVariable(target.getDisplayName()));
+        format = format.replace("%sender-server%", wrapVariable(player.getServer().getInfo().getName()));
+        format = format.replace("%target-server%", wrapVariable(target.getServer().getInfo().getName()));
         format = format.replace("%message%", message);
         return format;
     }
