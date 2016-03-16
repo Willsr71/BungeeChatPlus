@@ -36,6 +36,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public final Map<String, AntiSpamData> spamDataMap = new HashMap<>();
     public Map<String, FilterData> filterDataMap = new HashMap<>();
     public List<String> localPlayers = new ArrayList<>();
+    public List<String> silencedPlayers = new ArrayList<>();
     public MuteData mutedPlayers;
     public List<String> excludedServers = new ArrayList<>();
     public List<String> swearList = new ArrayList<>();
@@ -94,6 +95,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
         excludedServers = config.getStringList("excludeServers");
         localPlayers = playerLists.getStringList("localPlayers");
+        silencedPlayers = playerLists.getStringList("silencedPlayers");
         if (playerLists.get("mutedPlayers") != null && !playerLists.getString("mutedPlayers").equals("None")) {
             if (debug) getLogger().log(Level.INFO, playerLists.get("mutedPlayers").toString());
             Configuration playerList = playerLists.getSection("mutedPlayers");
@@ -179,6 +181,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         try {
             if (checkMuted(player)) return;
             if (checkSpam(player)) return;
+            if (checkSilenced(player)) return;
             message = preparePlayerChat(message, player);
             message = replaceRegex(message);
             message = applyTagLogic(message);
@@ -206,6 +209,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
             // broadcast message
             BaseComponent[] msg = chatParser.parse(text);
             for (ProxiedPlayer target : getProxy().getPlayers()) {
+                if (silencedPlayers.contains(target.getName())) {
+                    continue;
+                }
+
                 if (ignoredPlayers.get(target.getName()) != null && ignoredPlayers.get(target.getName()).contains(player.getName())) {
                     continue;
                 }
@@ -336,7 +343,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
     }
 
     public boolean checkMuted(ProxiedPlayer player) {
-        if (!config.getBoolean("enableMute", true)) return false;
+        if (!config.getBoolean("muteEnabled", true)) return false;
 
         String name = player.getName();
         if (mutedPlayers.isMuted(name)) {
@@ -344,6 +351,16 @@ public class BungeeChatPlus extends Plugin implements Listener {
             text = text.replace("%reason%", wrapVariable(mutedPlayers.getReason(player.getName())));
             text = text.replace("%duration%", wrapVariable(DateUtils.formatDateDiff(mutedPlayers.getExpire(player.getName()))));
             player.sendMessage(chatParser.parse(text));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkSilenced(ProxiedPlayer player) {
+        if (!config.getBoolean("silenceEnabled", true)) return false;
+
+        if (silencedPlayers.contains(player.getName())) {
+            player.sendMessage(chatParser.parse(config.getString("silenced")));
             return true;
         }
         return false;
@@ -426,6 +443,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
     public void savePlayerLists() {
         playerLists.set("localPlayers", localPlayers);
+        playerLists.set("silencedPlayers", silencedPlayers);
         playerLists.set("mutedPlayers", null);
         ArrayList<MutedPlayer> mutedList = mutedPlayers.getMutedPlayerData();
         if (mutedList.size() > 0) {

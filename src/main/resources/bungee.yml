@@ -22,6 +22,9 @@ permissions:
   bungeechatplus.mute.unmute:
     default: op
     description: Ability to unmute players
+  bungeechatplus.silence.others:
+    default: op
+    description: Ability to silence and unsilence players' chat
   bungeechatplus.forceglobalchat:
     default: op
     description: Players with this permission force their chat messages to all players, regardless of that player being on local or global chat, useful for staff work

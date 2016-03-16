@@ -78,6 +78,16 @@ muteUnmuteCommandAliases: ['unmute', 'bungeeunmute']
 muteListCommandAliases: ['mutelist', 'bungeemutelist', 'listmuted', 'bungeelistmuted']
 
 ###################################
+#####    Player Silencing     #####
+###################################
+silenceEnabled: true
+silenced: "&cYou are silenced. Do [suggest=/silence]/silence[/suggest] to be unsilenced"
+silencePlayer: "&7%target%'s chat has been silenced"
+unsilencePlayer: "&7%target%'s chat has been unsilenced"
+silenceCommandAliases: ['silence', 'silencechat']
+unslienceCommandAliases: ['unsilence', 'unsilencechat']
+
+###################################
 #####      Player Ignore      #####
 ###################################
 ignoreEnabled: true

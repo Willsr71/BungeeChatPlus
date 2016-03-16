@@ -18,6 +18,7 @@ public class CommandBase {
     public CommandMute commandMute;
     public CommandReload commandReload;
     public CommandReply commandReply;
+    public CommandSilence commandSilence;
     public CommandTempMute commandTempMute;
     public CommandToggleChat commandToggleChat;
     public CommandUnMute commandUnMute;
@@ -154,6 +155,11 @@ public class CommandBase {
         if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("reply", "r");
         commandReply = new CommandReply(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
         plugin.getProxy().getPluginManager().registerCommand(plugin, commandReply);
+
+        aliases = plugin.config.getStringList("silenceCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("silence", "silencechat");
+        commandSilence = new CommandSilence(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+        plugin.getProxy().getPluginManager().registerCommand(plugin, commandSilence);
 
         aliases = plugin.config.getStringList("muteTempMuteCommandAliases");
         if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("tempmute", "bungeetempmute");
