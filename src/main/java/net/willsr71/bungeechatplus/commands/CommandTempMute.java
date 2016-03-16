@@ -50,19 +50,16 @@ public class CommandTempMute extends Command {
 
         ProxiedPlayer toMute = plugin.getProxy().getPlayer(args[0]);
 
-        if (toMute == null) {
-            text = plugin.config.getString("unknownTarget").replace("%target%", plugin.wrapVariable(args[0]));
-            cs.sendMessage(plugin.chatParser.parse(text));
-            return;
-        }
-
         // add player to mute list
-        if (!plugin.mutedPlayers.isMuted(toMute.getName())) {
-            plugin.mutedPlayers.setMuted(toMute.getName(), reason, date);
-            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteSuccess"), toMute.getName(), reason, DateUtils.formatDateDiff(date))));
-            toMute.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMessage"), toMute.getName(), reason, DateUtils.formatDateDiff(date))));
+        if (!plugin.mutedPlayers.isMuted(args[0])) {
+            plugin.mutedPlayers.setMuted(args[0], reason, date);
+            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteSuccess"), args[0], reason, DateUtils.formatDateDiff(date))));
+
+            if (toMute != null) {
+                toMute.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMessage"), args[0], reason, DateUtils.formatDateDiff(date))));
+            }
         } else {
-            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMuteFail"), toMute.getName(), reason, DateUtils.formatDateDiff(date))));
+            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMuteFail"), args[0], reason, DateUtils.formatDateDiff(date))));
         }
         plugin.savePlayerLists();
     }
