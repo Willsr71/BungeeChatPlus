@@ -4,12 +4,14 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
+import net.willsr71.bungeechatplus.ChatParser;
+import net.willsr71.bungeechatplus.DateUtils;
 
-public class CommandMute extends Command {
+public class CommandTempMute extends Command {
 
     private BungeeChatPlus plugin;
 
-    public CommandMute(BungeeChatPlus plugin, String name, String permission, String... aliases) {
+    public CommandTempMute(BungeeChatPlus plugin, String name, String permission, String... aliases) {
         super(name, permission, aliases);
         this.plugin = plugin;
     }
@@ -30,16 +32,22 @@ public class CommandMute extends Command {
 
         String text;
         if (args.length < 2) {
-            cs.sendMessage(plugin.chatParser.parse("/mute <player> <reason>"));
+            cs.sendMessage(plugin.chatParser.parse("/tempmute <player> <duration> <reason>"));
             return;
         }
 
         String reason = "";
-        for (int x = 1; x < args.length; x++) {
+        for (int x = 2; x < args.length; x++) {
             reason = (reason + " " + args[x]).trim();
         }
 
-        long date = -1;
+        long date = 0;
+        try {
+            date = DateUtils.parseDateDiff(args[1], true);
+        } catch (Exception e) {
+            cs.sendMessage(plugin.chatParser.parse("&cInvalid time"));
+            return;
+        }
 
         ProxiedPlayer toMute = plugin.getProxy().getPlayer(args[0]);
 
@@ -52,10 +60,10 @@ public class CommandMute extends Command {
         // add player to mute list
         if (!plugin.mutedPlayers.isMuted(toMute.getName())) {
             plugin.mutedPlayers.setMuted(toMute.getName(), reason, date);
-            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteSuccess"), toMute.getName(), reason, "eternity")));
-            toMute.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMessage"), toMute.getName(), reason, "eternity")));
+            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteSuccess"), toMute.getName(), reason, DateUtils.formatDateDiff(date))));
+            toMute.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMessage"), toMute.getName(), reason, DateUtils.formatDateDiff(date))));
         } else {
-            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMuteFail"), toMute.getName(), reason, "eternity")));
+            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMuteFail"), toMute.getName(), reason, DateUtils.formatDateDiff(date))));
         }
         plugin.savePlayerLists();
     }

@@ -98,7 +98,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             if (debug) getLogger().log(Level.INFO, playerLists.get("mutedPlayers").toString());
             Configuration playerList = playerLists.getSection("mutedPlayers");
             for (String player : playerList.getKeys()) {
-                mutedPlayers.setMuted(player, playerList.getString(player + ".reason"), playerList.getString(player + ".expire"));
+                mutedPlayers.setMuted(player, playerList.getString(player + ".reason"), playerList.getLong(player + ".expire"));
             }
         }
 
@@ -126,12 +126,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         if (persistentConversations.containsKey(player.getName())) {
             final ProxiedPlayer target = getProxy().getPlayer(persistentConversations.get(player.getName()));
             if (target != null) {
-                getProxy().getScheduler().runAsync(this, new Runnable() {
-                    @Override
-                    public void run() {
-                        sendPrivateMessage(event.getMessage(), target, player);
-                    }
-                });
+                getProxy().getScheduler().runAsync(this, () -> sendPrivateMessage(event.getMessage(), target, player));
                 event.setCancelled(true);
                 return;
             } else {
@@ -151,12 +146,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
 
         final String message = event.getMessage();
 
-        getProxy().getScheduler().runAsync(this, new Runnable() {
-            @Override
-            public void run() {
-                sendGlobalChatMessage(player, message);
-            }
-        });
+        getProxy().getScheduler().runAsync(this, () -> sendGlobalChatMessage(player, message));
     }
 
     @EventHandler
@@ -352,7 +342,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         if (mutedPlayers.isMuted(name)) {
             String text = config.getString("muteDenyMessage");
             text = text.replace("%reason%", wrapVariable(mutedPlayers.getReason(player.getName())));
-            text = text.replace("%duration%", wrapVariable(mutedPlayers.getDuration(player.getName())));
+            text = text.replace("%duration%", wrapVariable(DateUtils.formatDateDiff(mutedPlayers.getExpire(player.getName()))));
             player.sendMessage(chatParser.parse(text));
             return true;
         }
@@ -437,16 +427,13 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public void savePlayerLists() {
         playerLists.set("localPlayers", localPlayers);
         playerLists.set("mutedPlayers", null);
-        ArrayList<String[]> mutedList = mutedPlayers.getMutedPlayerData();
+        ArrayList<MutedPlayer> mutedList = mutedPlayers.getMutedPlayerData();
         if (mutedList.size() > 0) {
-            for (String[] muted : mutedList) {
-                String player = muted[0];
-                String reason = muted[1];
-                String expire = muted[2];
-                if (debug) getLogger().log(Level.INFO, "mutedPlayers." + player + ".reason = " + reason);
-                if (debug) getLogger().log(Level.INFO, "mutedPlayers." + player + ".expire = " + expire);
-                playerLists.set("mutedPlayers." + player + ".reason", reason);
-                playerLists.set("mutedPlayers." + player + ".expire", expire);
+            for (MutedPlayer player : mutedList) {
+                if (debug) getLogger().log(Level.INFO, "mutedPlayers." + player.getName() + ".reason = " + player.getReason());
+                if (debug) getLogger().log(Level.INFO, "mutedPlayers." + player.getName() + ".expire = " + player.getExpire());
+                playerLists.set("mutedPlayers." + player.getName() + ".reason", player.getReason());
+                playerLists.set("mutedPlayers." + player.getName() + ".expire", player.getExpire());
             }
         } else {
             playerLists.set("mutedPlayers", "None");

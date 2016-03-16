@@ -43,12 +43,7 @@ public class CommandReply extends Command {
         }
 
         final String finalText = text;
-        plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.sendPrivateMessage(finalText, target, player);
-            }
-        });
+        plugin.getProxy().getScheduler().runAsync(plugin, () -> plugin.sendPrivateMessage(finalText, target, player));
     }
 
 }

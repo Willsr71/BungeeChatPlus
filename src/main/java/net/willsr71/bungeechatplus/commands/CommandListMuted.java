@@ -3,6 +3,8 @@ package net.willsr71.bungeechatplus.commands;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
+import net.willsr71.bungeechatplus.DateUtils;
+import net.willsr71.bungeechatplus.MutedPlayer;
 
 public class CommandListMuted extends Command {
 
@@ -22,8 +24,8 @@ public class CommandListMuted extends Command {
 
         String text = "&7Muted Players:";
         if (plugin.mutedPlayers.size() > 0) {
-            for (String[] player : plugin.mutedPlayers.getMutedPlayerData()) {
-                text = text + "\n&6Player: &7" + player[0] + ", &6Expire: &7" + player[2] + ", &6Reason: &7" + player[1];
+            for (MutedPlayer player : plugin.mutedPlayers.getMutedPlayerData()) {
+                text = text + "\n&6Player: &7" + player.getName() + ", &6Expire: &7" + DateUtils.formatDateDiff(player.getExpire()) + ", &6Reason: &7" + player.getReason();
             }
         } else {
             text = text + " None";

@@ -38,11 +38,6 @@ public class CommandGlobalChat extends Command {
         }
 
         final String finalMessage = message;
-        plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.sendGlobalChatMessage((ProxiedPlayer) cs, finalMessage);
-            }
-        });
+        plugin.getProxy().getScheduler().runAsync(plugin, () -> plugin.sendGlobalChatMessage((ProxiedPlayer) cs, finalMessage));
     }
 }

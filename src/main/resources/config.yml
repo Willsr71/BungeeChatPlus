@@ -73,6 +73,7 @@ muteUnmuted: "&7%target% has been unmuted"
 muteAlreadyMuted: "&7%target% is already muted for %reason% until %duration%"
 muteUnmuteFail: "&7%target% is not muted"
 muteCommandAliases: ['mute', 'bungeemute']
+muteTempMuteCommandAliases: ['tempmute', 'bungeetempmute']
 muteUnmuteCommandAliases: ['unmute', 'bungeeunmute']
 muteListCommandAliases: ['mutelist', 'bungeemutelist', 'listmuted', 'bungeelistmuted']
 

@@ -18,6 +18,7 @@ public class CommandBase {
     public CommandMute commandMute;
     public CommandReload commandReload;
     public CommandReply commandReply;
+    public CommandTempMute commandTempMute;
     public CommandToggleChat commandToggleChat;
     public CommandUnMute commandUnMute;
     public boolean commandsLoaded = false;
@@ -141,7 +142,7 @@ public class CommandBase {
 
         aliases = plugin.config.getStringList("muteCommandAliases");
         if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("mute", "bungeemute");
-        commandMute = new CommandMute(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+        commandMute = new CommandMute(plugin, aliases.get(0), "bungeechatplus.mute.mute", aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
         plugin.getProxy().getPluginManager().registerCommand(plugin, commandMute);
 
         aliases = plugin.config.getStringList("reloadCommandAliases");
@@ -154,6 +155,11 @@ public class CommandBase {
         commandReply = new CommandReply(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
         plugin.getProxy().getPluginManager().registerCommand(plugin, commandReply);
 
+        aliases = plugin.config.getStringList("muteTempMuteCommandAliases");
+        if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("tempmute", "bungeetempmute");
+        commandTempMute = new CommandTempMute(plugin, aliases.get(0), "bungeechatplus.mute.tempmute", aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+        plugin.getProxy().getPluginManager().registerCommand(plugin, commandTempMute);
+
         aliases = plugin.config.getStringList("toggleChatCommandAliases");
         if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("togglechat", "chattoggle");
         commandToggleChat = new CommandToggleChat(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
@@ -161,7 +167,7 @@ public class CommandBase {
 
         aliases = plugin.config.getStringList("muteUnmuteCommandAliases");
         if (aliases == null || aliases.isEmpty()) aliases = Arrays.asList("unmute", "bungeeunmute");
-        commandUnMute = new CommandUnMute(plugin, aliases.get(0), null, aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
+        commandUnMute = new CommandUnMute(plugin, aliases.get(0), "bungeechatplus.mute.unmute", aliases.subList(1, aliases.size()).toArray(new String[aliases.size() - 1]));
         plugin.getProxy().getPluginManager().registerCommand(plugin, commandUnMute);
 
         commandsLoaded = true;

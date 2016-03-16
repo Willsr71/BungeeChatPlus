@@ -37,11 +37,6 @@ public class CommandLocalChat extends Command {
         }
 
         final String finalMessage = message.trim();
-        plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-            @Override
-            public void run() {
-                ((ProxiedPlayer) cs).chat(finalMessage);
-            }
-        });
+        plugin.getProxy().getScheduler().runAsync(plugin, () -> ((ProxiedPlayer) cs).chat(finalMessage));
     }
 }

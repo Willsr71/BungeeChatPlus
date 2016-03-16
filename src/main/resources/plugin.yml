@@ -13,9 +13,15 @@ permissions:
   bungeechatplus.reload:
     desfault: op
     description: The ability to reload plugin configs
-  bungeechatplus.mute:
+  bungeechatplus.mute.mute:
     default: op
-    description: Ability to mute and unmute players
+    description: Ability to permanently mute players
+  bungeechatplus.mute.tempmute:
+    default: op
+    description: Ability to temporarily mute players
+  bungeechatplus.mute.unmute:
+    default: op
+    description: Ability to unmute players
   bungeechatplus.forceglobalchat:
     default: op
     description: Players with this permission force their chat messages to all players, regardless of that player being on local or global chat, useful for staff work
