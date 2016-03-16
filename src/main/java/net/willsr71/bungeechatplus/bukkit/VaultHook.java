@@ -11,7 +11,6 @@ import java.util.logging.Level;
 
 public class VaultHook {
     public static Permission permission = null;
-    public static Economy economy = null;
     public static Chat chat = null;
     BungeeChatPlusBukkit plugin;
 
@@ -23,7 +22,6 @@ public class VaultHook {
     public void refresh() {
         setupChat();
         setupPermissions();
-        setupEconomy();
     }
 
     private boolean setupChat() {
@@ -46,16 +44,6 @@ public class VaultHook {
         return true;
     }
 
-    private boolean setupEconomy() {
-        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        if (economyProvider == null) {
-            plugin.getLogger().log(Level.WARNING, "Error getting Economy hook.");
-            return false;
-        }
-        economy = economyProvider.getProvider();
-        return true;
-    }
-
     public String getGroup(Player player) {
         if (permission == null) return "ERR";
         return permission.getPrimaryGroup(player);
@@ -69,20 +57,5 @@ public class VaultHook {
     public String getSuffix(Player player) {
         if (chat == null) return "ERR";
         return chat.getPlayerSuffix(player);
-    }
-
-    public String getBalance(Player player) {
-        if (economy == null) return "0";
-        return Double.toString(economy.getBalance(player.getName()));
-    }
-
-    public String getCurrencyName() {
-        if (economy == null) return "$";
-        return economy.currencyNameSingular();
-    }
-
-    public String getCurrencyNamePl() {
-        if (economy == null) return "$";
-        return economy.currencyNamePlural();
     }
 }

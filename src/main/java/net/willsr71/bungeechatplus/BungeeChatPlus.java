@@ -82,7 +82,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
         config = configManager.getConfig();
         playerLists = playerListsManager.getConfig();
         String version = config.getString("dontTouch.version.seriouslyThisWillEraseYourConfig");
-        if (version == null || !version.equals("1.8")) {
+        if (version == null || !version.equals("1.8.1")) {
             configManager.replaceConfig();
             config = configManager.getConfig();
         }
@@ -255,7 +255,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             // replace variables
             String text = config.getString("chatFormat").replace("%player%", config.getString("consoleName", "SERVER"));
             text = text.replace("%message%", message);
-            text = text.replaceAll("%(group|prefix|suffix|balance|currency|currencyPl|tabName|displayName|world|health|level)%", "");
+            text = text.replaceAll("%(group|prefix|suffix|tabName|displayName)%", "");
 
             // broadcast message
             BaseComponent[] msg = chatParser.parse(text);
@@ -325,11 +325,8 @@ public class BungeeChatPlus extends Plugin implements Listener {
         format = format.replace("%player%", wrapVariable(player.getDisplayName()));
         format = format.replace("%name%", wrapVariable(player.getDisplayName()));
         format = format.replace("%server%", wrapVariable(serverInfo.getName()));
-        format = format.replace("%server-players%", wrapVariable(serverInfo.getPlayers().size() + ""));
-        format = format.replace("%server-motd%", wrapVariable(serverInfo.getMotd()));
         format = format.replace("%type%", wrapVariable(type));
         format = format.replace("%forced%", wrapVariable(forced));
-        format = format.replace("%ping%", wrapVariable(Integer.toString(player.getPing())));
         return format;
     }
 

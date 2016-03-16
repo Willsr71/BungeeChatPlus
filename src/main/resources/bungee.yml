@@ -1,6 +1,6 @@
 name: BungeeChatPlus
 main : net.willsr71.bungeechatplus.BungeeChatPlus
-version: 1.8
+version: 1.8.1
 description: A capable chat plugin for bungee
 author: Willsr71
 website: http://willsr71.net/

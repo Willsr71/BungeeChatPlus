@@ -5,23 +5,18 @@
 # %player%, %name% - Player display name
 # %message% - Message being sent
 # %server% - Server name
-# %server-players% - Number of players on the server
-# %server-motd% - Server MOTD
 # %type% - Local or global chat. Can be configured using varGlobalChat and varLocalChat
 # %forced% - Whether the player is forced or not. Can be configured using varForcedGlobal and varNotForced
 # %ping% - The player's current ping
 #
 # Variables that can be used if BungeeChatPlus is installed on the Bukkit/Spigot server
-# %tabName% - Player tab Name
-# %world% - Player current dimension name
-# %health% - Player current health
-# %level% - Player current level
+# %tabName% - Player tab name
+# %displayName% - Player display name
 #
-# Variabled that can be user if Vault is installed along with BungeeChatPlus on the Bukkit/Spigot server
+# Variables that can be user if Vault is installed along with BungeeChatPlus on the Bukkit/Spigot server
 # %group% - Player group
 # %prefix% - Player prefix
 # %suffix% - Player suffix
-# %balance%, %currency%, %currencyPl% - Money related stuffs
 #
 # The format used for all chat messages
 chatFormat: "&a[&9%type%%forced%&a] [&9%server%&a] [&9%prefix%&a] &9[suggest=@%name% ][hover=%name%]%tabName%[/hover][/suggest]&a:&r %message%"
@@ -141,7 +136,7 @@ excludeServers: []
 dontTouch:
   debug: false
   version:
-    seriouslyThisWillEraseYourConfig: '1.8'
+    seriouslyThisWillEraseYourConfig: '1.8.1'
 
 ###################################
 #####          Regex          #####

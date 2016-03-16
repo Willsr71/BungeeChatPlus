@@ -69,7 +69,7 @@ public class BukkitBridge implements Listener {
 
     public String replaceVariables(ProxiedPlayer player, String text, String prefix) {
         int tries = 0;
-        while (text.matches("^.*%" + prefix + "(group|prefix|suffix|balance|currency|currencyPl|tabName|displayName|world|health|level)%.*$")
+        while (text.matches("^.*%" + prefix + "(group|prefix|suffix|tabName|displayName)%.*$")
                 && tries < 3) {
             try {
                 int id = getId();
