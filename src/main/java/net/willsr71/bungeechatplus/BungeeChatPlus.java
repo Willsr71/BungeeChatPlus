@@ -430,8 +430,10 @@ public class BungeeChatPlus extends Plugin implements Listener {
         ArrayList<MutedPlayer> mutedList = mutedPlayers.getMutedPlayerData();
         if (mutedList.size() > 0) {
             for (MutedPlayer player : mutedList) {
-                if (debug) getLogger().log(Level.INFO, "mutedPlayers." + player.getName() + ".reason = " + player.getReason());
-                if (debug) getLogger().log(Level.INFO, "mutedPlayers." + player.getName() + ".expire = " + player.getExpire());
+                if (debug)
+                    getLogger().log(Level.INFO, "mutedPlayers." + player.getName() + ".reason = " + player.getReason());
+                if (debug)
+                    getLogger().log(Level.INFO, "mutedPlayers." + player.getName() + ".expire = " + player.getExpire());
                 playerLists.set("mutedPlayers." + player.getName() + ".reason", player.getReason());
                 playerLists.set("mutedPlayers." + player.getName() + ".expire", player.getExpire());
             }
