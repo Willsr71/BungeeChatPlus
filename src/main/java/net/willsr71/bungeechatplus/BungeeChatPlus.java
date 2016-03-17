@@ -48,11 +48,14 @@ public class BungeeChatPlus extends Plugin implements Listener {
     public BukkitBridge bukkitBridge;
     public CommandBase commandBase;
 
+    public static String version;
     public boolean debug = false;
 
     @Override
     public void onEnable() {
         instance = this;
+
+        version = getDescription().getVersion();
 
         configManager = new ConfigManager(this, "config.yml");
         playerListsManager = new ConfigManager(this, "playerLists.yml");
@@ -83,8 +86,8 @@ public class BungeeChatPlus extends Plugin implements Listener {
         playerListsManager.reloadConfig();
         config = configManager.getConfig();
         playerLists = playerListsManager.getConfig();
-        String version = config.getString("dontTouch.version.seriouslyThisWillEraseYourConfig");
-        if (version == null || !version.equals("1.8.1")) {
+        String configVersion = config.getString("dontTouch.version.seriouslyThisWillEraseYourConfig");
+        if (configVersion == null || !configVersion.equals(version)) {
             configManager.replaceConfig();
             config = configManager.getConfig();
         }

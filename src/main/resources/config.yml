@@ -147,7 +147,7 @@ excludeServers: []
 dontTouch:
   debug: false
   version:
-    seriouslyThisWillEraseYourConfig: '1.8.1'
+    seriouslyThisWillEraseYourConfig: '%VERSION%'
 
 ###################################
 #####    Server AutoReply     #####
