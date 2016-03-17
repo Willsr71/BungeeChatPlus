@@ -234,6 +234,7 @@ public class BungeeChatPlus extends Plugin implements Listener {
             BCPLogger.logChat(player, message);
 
             if (isCapsing) player.sendMessage(chatParser.parse(config.getString("antiCapsMessage")));
+            autoReply(player, message);
         } catch (Throwable th) {
             try {
                 player.sendMessage(chatParser.parse(config.getString("internalError")));
@@ -410,6 +411,17 @@ public class BungeeChatPlus extends Plugin implements Listener {
             return player;
         }
         return getProxy().getPlayer(t);
+    }
+
+    public void autoReply(ProxiedPlayer player, String message) {
+        List list = config.getList("autoreply");
+        if (list == null) return;
+        for (Object entry : list) {
+            Map map = (Map) entry;
+            if (Pattern.compile((String) map.get("message")).matcher(message).find()) {
+                player.sendMessage(chatParser.parse((String) map.get("reply")));
+            }
+        }
     }
 
     public String replaceRegex(String str) {

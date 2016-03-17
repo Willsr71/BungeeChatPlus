@@ -150,43 +150,50 @@ dontTouch:
     seriouslyThisWillEraseYourConfig: '1.8.1'
 
 ###################################
+#####    Server AutoReply     #####
+###################################
+autoreply:
+- message: '(?i)how do i do?'
+  reply: "you dont."
+
+###################################
 #####          Regex          #####
 ###################################
 regex:
 # make any pasted links clickable for convenience
-    - search: '(?<link>(?:(https?)://)?([-\w_\.]{2,}\.[a-z]{2,4})(/\S*)?)'
-      replace: "[url]${link}[/url]"
+- search: '(?<link>(?:(https?)://)?([-\w_\.]{2,}\.[a-z]{2,4})(/\S*)?)'
+  replace: "[url]${link}[/url]"
 # shows link target in tooltip for security reasons (only if link target differs from shown text)
-    - search: '(?i)\[(?:url|command)=(?<cmd>(?:(?:[^]\[]*)\[(?:[^]\[]*)\])*(?:[^]\[]*))\]'
-      replace: "[hover=&b${cmd}]$0"
-    - search: '(?i)\[/(?:url|command)\]'
-      replace: "$0[/hover]"
+- search: '(?i)\[(?:url|command)=(?<cmd>(?:(?:[^]\[]*)\[(?:[^]\[]*)\])*(?:[^]\[]*))\]'
+  replace: "[hover=&b${cmd}]$0"
+- search: '(?i)\[/(?:url|command)\]'
+  replace: "$0[/hover]"
 # if players write commands in chat like ./command, make them clickable + remove the dot
-    - search: '(?i)^\.(?<cmd>/.{2,})'
-      replace: "[suggest]${cmd}[/suggest]"
+- search: '(?i)^\.(?<cmd>/.{2,})'
+  replace: "[suggest]${cmd}[/suggest]"
 # some smileys
-    - search: '--->'
-      replace: "\u21DB"
-    - search: '<---'
-      replace: "\u21DA"
-    - search: '-->'
-      replace: "\u21D2"
-    - search: '<--'
-      replace: "\u21D0"
-    - search: '->'
-      replace: "\u2192"
-    - search: '<-'
-      replace: "\u2190"
-    - search: '\(o\)|\(O\)|\(time\)'
-      replace: "\u231A"
-    - search: '\(rain\)'
-      replace: "\u2602"
-    - search: '\(sun\)'
-      replace: "\u2600"
-    - search: '<3'
-      replace: "\u2764"
+- search: '--->'
+  replace: "\u21DB"
+- search: '<---'
+  replace: "\u21DA"
+- search: '-->'
+  replace: "\u21D2"
+- search: '<--'
+  replace: "\u21D0"
+- search: '->'
+  replace: "\u2192"
+- search: '<-'
+  replace: "\u2190"
+- search: '\(o\)|\(O\)|\(time\)'
+  replace: "\u231A"
+- search: '\(rain\)'
+  replace: "\u2602"
+- search: '\(sun\)'
+  replace: "\u2600"
+- search: '<3'
+  replace: "\u2764"
 # underline clickable things
-    - search: '(?i)(?=(\[(?:url|command|suggest)(?:=(?<cmd>(?:(?:[^]\[]*)\[(?:[^]\[]*)\])*(?:[^]\[]*)))?\]))'
-      replace: "[u]"
-    - search: '(?i)\[/(?:url|command|suggest)\]'
-      replace: "$0[/u]"
+- search: '(?i)(?=(\[(?:url|command|suggest)(?:=(?<cmd>(?:(?:[^]\[]*)\[(?:[^]\[]*)\])*(?:[^]\[]*)))?\]))'
+  replace: "[u]"
+- search: '(?i)\[/(?:url|command|suggest)\]'
+  replace: "$0[/u]"
