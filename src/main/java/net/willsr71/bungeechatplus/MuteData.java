@@ -1,6 +1,7 @@
 package net.willsr71.bungeechatplus;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MuteData {
     private BungeeChatPlus plugin;
@@ -27,7 +28,17 @@ public class MuteData {
     public boolean isMuted(String player) {
         for (MutedPlayer mutedPlayer : mutedPlayers) {
             if (mutedPlayer.getName().equals(player)) {
-                return true;
+                if (mutedPlayer.getExpire() == -1) {
+                    return true;
+                }
+
+                if (new Date(mutedPlayer.getExpire()).after(new Date())) {
+                    return true;
+                }
+
+                setUnMuted(mutedPlayer.getName());
+                plugin.savePlayerLists();
+                return false;
             }
         }
         return false;

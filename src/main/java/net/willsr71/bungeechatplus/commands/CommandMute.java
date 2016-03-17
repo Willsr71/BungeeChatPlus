@@ -4,6 +4,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.willsr71.bungeechatplus.BungeeChatPlus;
+import net.willsr71.bungeechatplus.DateUtils;
 
 public class CommandMute extends Command {
 
@@ -52,7 +53,7 @@ public class CommandMute extends Command {
                 toMute.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMessage"), args[0], reason, "eternity")));
             }
         } else {
-            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMuteFail"), args[0], reason, "eternity")));
+            cs.sendMessage(plugin.chatParser.parse(replaceVars(plugin.config.getString("muteMuteFail"), args[0], reason, DateUtils.formatDateDiff(plugin.mutedPlayers.getExpire(args[0])))));
         }
         plugin.savePlayerLists();
     }

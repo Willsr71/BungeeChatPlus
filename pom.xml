@@ -6,7 +6,7 @@
 
     <groupId>net.willsr71</groupId>
     <artifactId>bungeechatplus</artifactId>
-    <version>1.8.2</version>
+    <version>1.8.3</version>
 
     <name>BungeeChatPlus</name>
     <description>A capable plugin for Bungee</description>
