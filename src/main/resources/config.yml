@@ -154,7 +154,7 @@ dontTouch:
 ###################################
 autoreply:
 - message: '(?i)how do i'
-  reply: "&a[&e!&a] &3Google it. [hover=https://google.com/][url=https://google.com/]https://google.com/[/url][/hover]"
+  reply: "&7Google it. [hover=https://google.com/][url=https://google.com/]https://google.com/[/url][/hover]"
 
 ###################################
 #####          Regex          #####
