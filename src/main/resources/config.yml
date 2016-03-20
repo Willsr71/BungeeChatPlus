@@ -114,7 +114,6 @@ filterBlacklist: ['Forced']
 #####        Anti-Spam        #####
 ###################################
 antiSpamEnabled: true
-# antiSpamMuteTime is not implemented yet.
 antiSpamMuteTime: 60
 antiSpamDenyMessage: "&cYou have sent to many messages. You must wait 1 minute before sending messages again."
 

@@ -6,8 +6,7 @@ public class AntiSpamData {
 
     public boolean isSpamming() {
         long now = System.currentTimeMillis();
-        if (now - lastSpam < 60000) {
-            // user still has too wait a minute
+        if (now - lastSpam < BungeeChatPlus.instance.config.getInt("antiSpamMuteTime") * 1000) {
             return true;
         }
         long delta = now - lastMessages[2];
